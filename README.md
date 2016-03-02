@@ -1,8 +1,6 @@
 # turkish-suffixes
 _**A PHP Class for proper noun suffixes in Turkish Language.**_
 
-This project is ~5 years old. I wrote all the functions and variables in Turkish back then. We'll update the project for a better readability.
-
 Because of the PHP's UTF-8 case-insensitive bug, this Class may not be work correctly for uppercase names. We'll update it later.
 
 Should work with PHP >=4.0.6, but we recommend PHP >=5
@@ -14,8 +12,6 @@ _(May not work as perfect as a Turkish/Literature teacher, because the Turkish L
 --
 
 _**Türkçe'deki özel isim hal ekleri (ve dahi bağlacı) için bir PHP Sınıfı.**_
-
-Bu proje yaklaşık 5 senelik. Zamanında Türkçe olarak ve kendimce kısaltmalarla yazdım; ama yakın bir zamanda daha anlaşılır olması için güncelleyeceğiz.
 
 PHP'deki UTF-8 karakterlerdeki küçük/büyük harf duyarlılığı ile ilgili bug'ı yüzünden büyük harfli tüm isimlere ekleri doğru getirmeyebilir. Yakında güncelleyeceğiz.
 
@@ -35,7 +31,7 @@ It's actually very easy, just include Turkce Class to your php file, like:
 
 and then use it for a name like this (all functions are static):
 
-`Turkce::bulunmaHali("Utku");`
+`Turkce::bulunmaHali("Utku");` or `Turkce::locativeCase("Utku");`
 
 and Turkce Class returns "Utku" as:
 
@@ -53,7 +49,7 @@ Aslında oldukça basit, sadece Turkce sınıfını php dosyanıza dahil edin, m
 
 sonra bir isme uygulamak için, şu şekilde kullanın (tüm fonksiyonlar statik):
 
-`Turkce::bulunmaHali("Utku");`
+`Turkce::bulunmaHali("Utku");` veya `Turkce::locativeCase("Utku");`
 
 ve Turkce sınıfı "Utku" ismini şu hale getirsin:
 

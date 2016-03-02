@@ -13,7 +13,7 @@
 <?php
 require_once("../php/Turkce.php");
 
-$rapokisi = array(
+$Nouns = array(
     "Siis",
     "Utku Sipahioğlu",
     "Alper Özgün Yeşil",
@@ -123,47 +123,48 @@ $rapokisi = array(
     "Mustafa Kemal Atatürk",
     "Türkiye",
     "Amerika Birleşik Devletleri",
-    "Birleşik Krallık"
+    "Birleşik Krallık",
+    "World Wide Web"
 );
 
 if(isset($_GET['i'])) {
-    $isim = ucwords($_GET['i']);    //  !Warning: There is a bug for "i" letter when uppercase it to "İ". PHP makes "i" to "I".
+    $noun = ucwords($_GET['i']);    //  !Warning: There is a bug for "i" letter when uppercase it to "İ". PHP makes "i" to "I".
 
-    $ilk = preg_split("/ /", microtime());
-    $ilk = $ilk[0] + $ilk[1];
+    $first_time = preg_split("/ /", microtime());
+    $first_time = $first_time[0] + $first_time[1];
 
-    makeBlock($isim);
+    makeBlock($noun);
 
-    $son = preg_split("/ /", microtime());
-    $son = $son[0] + $son[1];
+    $last_time = preg_split("/ /", microtime());
+    $last_time = $last_time[0] + $last_time[1];
 
-    echo "<p>" . ($son - $ilk) . " seconds for " . $isim . "</p>";
+    echo "<p>" . ($last_time - $first_time) . " seconds for " . $noun . "</p>";
 }
 
 if(isset($_GET['stress'])) {
-    $ilk = preg_split("/ /", microtime());
-    $ilk = $ilk[0] + $ilk[1];
+    $first_time = preg_split("/ /", microtime());
+    $first_time = $first_time[0] + $first_time[1];
 
-    for($i = 0; $i < count($rapokisi); $i++) {
-        $isim = ucwords($rapokisi[$i]);   //  !Warning: There is a bug for "i" letter when uppercase it to "İ". PHP makes "i" to "I".
-        makeBlock($isim);
+    for($i = 0; $i < count($Nouns); $i++) {
+        $noun = ucwords($Nouns[$i]);   //  !Warning: There is a bug for "i" letter when uppercase it to "İ". PHP makes "i" to "I".
+        makeBlock($noun);
     }
 
-    $son = preg_split("/ /", microtime());
-    $son = $son[0] + $son[1];
+    $last_time = preg_split("/ /", microtime());
+    $last_time = $last_time[0] + $last_time[1];
 
-    echo "<p>" . ($son - $ilk) . " seconds for <b>" . count($rapokisi) . "</b> names</p>";
+    echo "<p>" . ($last_time - $first_time) . " seconds for <b>" . count($Nouns) . "</b> names</p>";
 }
 
-function makeBlock($isim) {
+function makeBlock($noun) {
     echo "<blockquote>";
-    echo "<b>Belirtme (Accusative) :</b> " . Turkce::belirtmeHali($isim) . "<br>";
-    echo "<b>Yönelme (Dative) :</b> " . Turkce::yonelmeHali($isim) . "<br>";
-    echo "<b>Bulunma (Locative) :</b> " . Turkce::bulunmaHali($isim) . "<br>";
-    echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali($isim) . "<br>";
-    echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali($isim) . "<br>";
-    echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali($isim) . "<br>";
-    echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac($isim) . "<br>";
+    echo "<b>Belirtme (Accusative) :</b> " . Turkce::accusativeCase($noun) . "<br>";
+    echo "<b>Yönelme (Dative) :</b> " . Turkce::yonelmeHali($noun) . "<br>";
+    echo "<b>Bulunma (Locative) :</b> " . Turkce::bulunmaHali($noun) . "<br>";
+    echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali($noun) . "<br>";
+    echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali($noun) . "<br>";
+    echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali($noun) . "<br>";
+    echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac($noun) . "<br>";
     echo "</blockquote>";
 }
 
