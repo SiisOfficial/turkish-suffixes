@@ -124,7 +124,31 @@ $Nouns = array(
     "Türkiye",
     "Amerika Birleşik Devletleri",
     "Birleşik Krallık",
-    "World Wide Web"
+    "World Wide Web",
+    "Apple",
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100,
+    1000,
+    1000000,
+    1000000000,
+    1000000000000
 );
 
 if(isset($_GET['i'])) {
@@ -157,15 +181,27 @@ if(isset($_GET['stress'])) {
 }
 
 function makeBlock($noun) {
-    echo "<blockquote>";
-    echo "<b>Belirtme (Accusative) :</b> " . Turkce::accusativeCase($noun) . "<br>";
-    echo "<b>Yönelme (Dative) :</b> " . Turkce::yonelmeHali($noun) . "<br>";
-    echo "<b>Bulunma (Locative) :</b> " . Turkce::bulunmaHali($noun) . "<br>";
-    echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali($noun) . "<br>";
-    echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali($noun) . "<br>";
-    echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali($noun) . "<br>";
-    echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac($noun) . "<br>";
-    echo "</blockquote>";
+    if($noun == "Apple") {
+        echo "<blockquote>";
+        echo "<b>Belirtme (Accusative) :</b> " . Turkce::accusativeCase("pıl", $noun) . "<br>";
+        echo "<b>Yönelme (Dative) :</b> " . Turkce::yonelmeHali("pıl", $noun) . "<br>";
+        echo "<b>Bulunma (Locative) :</b> " . Turkce::bulunmaHali("pıl", $noun) . "<br>";
+        echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali("pıl", $noun) . "<br>";
+        echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali("pıl", $noun) . "<br>";
+        echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali("pıl", $noun) . "<br>";
+        echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac("pıl", $noun) . "<br>";
+        echo "</blockquote>";
+    } else {
+        echo "<blockquote>";
+        echo "<b>Belirtme (Accusative) :</b> " . Turkce::accusativeCase($noun) . "<br>";
+        echo "<b>Yönelme (Dative) :</b> " . Turkce::yonelmeHali($noun) . "<br>";
+        echo "<b>Bulunma (Locative) :</b> " . Turkce::bulunmaHali($noun) . "<br>";
+        echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali($noun) . "<br>";
+        echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali($noun) . "<br>";
+        echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali($noun) . "<br>";
+        echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac($noun) . "<br>";
+        echo "</blockquote>";
+    }
 }
 
 ?>

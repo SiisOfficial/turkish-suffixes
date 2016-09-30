@@ -1,9 +1,7 @@
 # turkish-suffixes
-_**A PHP Class for proper noun suffixes in Turkish Language.**_
+_**A PHP Class for proper noun and number suffixes in Turkish Language.**_
 
-Because of the PHP's UTF-8 case-insensitive bug, this Class may not be work correctly for uppercase names. We'll update it later.
-
-Should work with PHP >=4.0.6, but we recommend PHP >=5
+Should work with PHP >=5
 
 _Not tested with PHP 7!_
 
@@ -11,11 +9,9 @@ _(May not work as perfect as a Turkish/Literature teacher, because the Turkish L
 
 --
 
-_**Türkçe'deki özel isim hal ekleri (ve dahi bağlacı) için bir PHP Sınıfı.**_
+_**Türkçe'deki özel isim ve sayılardaki hal ekleri (ve dahi bağlacı) için bir PHP Sınıfı.**_
 
-PHP'deki UTF-8 karakterlerdeki küçük/büyük harf duyarlılığı ile ilgili bug'ı yüzünden büyük harfli tüm isimlere ekleri doğru getirmeyebilir. Yakında güncelleyeceğiz.
-
-PHP 4.0.6 ve sonrasında çalışıyor olmalı; fakat PHP 5 ve yukarısı önerilir.
+PHP 5 ve sonrasında çalışıyor olmalı.
 
 _PHP 7 ile test edilmedi!_
 
