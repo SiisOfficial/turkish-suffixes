@@ -1,7 +1,7 @@
 # turkish-suffixes
-_**A PHP Class for proper noun and number suffixes in Turkish Language.**_
+_**A PHP/C# Class & JS Functions for proper noun and number suffixes in Turkish Language.**_
 
-Should work with PHP >=5
+Should work with PHP >=5, .NET >=2.0 and with all browsers
 
 _Not tested with PHP 7!_
 
@@ -11,7 +11,7 @@ _(May not work as perfect as a Turkish/Literature teacher, because the Turkish L
 
 _**Türkçe'deki özel isim ve sayılardaki hal ekleri (ve dahi bağlacı) için bir PHP Sınıfı.**_
 
-PHP 5 ve sonrasında çalışıyor olmalı.
+PHP >=5'te, .NET >=2.0'da ve tüm tarayıcılarda çalışıyor olmalı.
 
 _PHP 7 ile test edilmedi!_
 
@@ -21,15 +21,26 @@ _(Lütfen tüm isimlerde kusursuz sonuç veremeyeceğini unutmayın. Türkçe zo
 
 _For full usage example and performance info, please see the demo file._
 
-It's actually very easy, just include Turkce Class to your php file, like:
+It's actually very easy, just include Turkce to you project, like:
 
+_PHP_
 `require_once("Turkce.php");`
 
-and then use it for a name like this (all functions are static):
+_JavaScript_
+`<script src="Turkce.min.js"></script>`
 
+and then use it for a name like this (all functions are static for PHP/C#):
+
+_PHP_
 `Turkce::bulunmaHali("Utku");` or `Turkce::locativeCase("Utku");`
 
-and Turkce Class returns "Utku" as:
+_C#_
+`Turkce.bulunmaHali("Utku");` or `Turkce.locativeCase("Utku");`
+
+_JavaScript_
+`Turkce.bulunmaHali("Utku");` or `Turkce.locativeCase("Utku");`
+
+and Turkce Class/Functions returns "Utku" as:
 
 `Utku'da`
 
@@ -39,13 +50,24 @@ That's all folks!
 
 _Lütfen tam kullanım örnekleri ve performans bilgisi için demo dosyasına göz atın._
 
-Aslında oldukça basit, sadece Turkce sınıfını php dosyanıza dahil edin, mesela:
+Aslında oldukça basit, sadece Turkce'yi projenize dahil edin, mesela:
 
+_PHP_
 `require_once("Turkce.php");`
 
-sonra bir isme uygulamak için, şu şekilde kullanın (tüm fonksiyonlar statik):
+_JavaScript_
+`<script src="Turkce.js"></script>`
 
+sonra bir isme uygulamak için, şu şekilde kullanın (PHP/C#'ta tüm fonksiyonlar statik):
+
+_PHP_
 `Turkce::bulunmaHali("Utku");` veya `Turkce::locativeCase("Utku");`
+
+_C#_
+`Turkce.bulunmaHali("Utku");` veya `Turkce.locativeCase("Utku");`
+
+_JavaScript_
+`Turkce.bulunmaHali("Utku");` veya `Turkce.locativeCase("Utku");`
 
 ve Turkce sınıfı "Utku" ismini şu hale getirsin:
 
@@ -81,6 +103,14 @@ Didn't noticed any wrong suffix so far; but if you find, please open an issue at
 
 Şu ana kadar yanlış ek geldiğini görmedik; fakat bulursanız, lütfen en azından bir "issue" oluşturun.
 
+
+# Notes | Notlar
+
+Not well tested C# Class. It may have performance issues. Please don't hesitate to report bugs.
+
+--
+
+C# sınıfı çok iyi test edilmedi. Performans sorunları olabilir. Lütfen sorunları bildirmekten çekinmeyiniz.
 
 # Thanks | Teşekkür
 

@@ -1,3 +1,22 @@
+## 1.3 (2016-10-05)
+
+Features:
+
+- Added distributive and ordinal number methods.
+- added support for JavaScript🤘🏻
+- added support for C#🤘🏻
+
+Bugfixes:
+
+- Fixed a problem for some short words which are contains Turkish letters.
+- Added support for "-ığı" suffix.
+
+Changes:
+
+- some long and repetitive regex patterns defined as variables.
+- changed $sh variable name to $vowels
+- updated readme file.
+
 ## 1.2 (2016-09-30)
 
 Features:

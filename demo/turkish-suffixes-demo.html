@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <title>Turkish Suffixes JavaScript Demo</title>
+</head>
+<body>
+<div>
+    <input type="text" id="i" name="i" value="" onchange="clicked()" placeholder="İsim yaz...">
+    <button type="submit" onclick="clicked()">wubba lubba dub dub</button>
+    <a href="#" onclick="test()">Stress Test</a>
+</div>
+<div id="output">
+
+</div>
+<script src="../js/Turkce.min.js"></script>
+<script>
+    var output = document.getElementById("output");
+    var Nouns = [
+        "Siis",
+        "Utku Sipahioğlu",
+        "Alper Özgün Yeşil",
+        "Burak Köksal",
+        "Çağlar Şahin",
+        "Merve Kurt",
+        "Gizem Bor",
+        "Anıl Şen",
+        "Fatoş Yılmaz",
+        "Görkem Karagöz",
+        "Ömer Aybakır",
+        "Nevcan Yanık",
+        "Pelin Sürgit",
+        "Fulya Ulutürk",
+        "Tuğçe Altuntaş",
+        "Tuğçe Şahpaz",
+        "Kubilay Sağlam",
+        "Teorik Deli",
+        "Melis Karabulut",
+        "Ümra Yıldırım",
+        "Furkan Demirci",
+        "Burcu Zülal Türker",
+        "Mavi Deniz Yapar",
+        "Gizem Pakyürek",
+        "Ellis Bexter",
+        "Mert Duygun",
+        "Hasan Maratuk",
+        "Çiğdem Elif Çelik",
+        "Yağmur Işık",
+        "Soner Altın",
+        "Erkan Kerti",
+        "Zafer Elçik",
+        "Aykut Guncan",
+        "Maksude Ozturk",
+        "Maksude Oztürk",
+        "Nur Kübra özkan",
+        "Dilan Kaygusuz",
+        "Burak Karabey",
+        "Barış Gürbüz",
+        "Ulaş Erdegör",
+        "Damla Özsargın",
+        "Müge Bora Bayraktar",
+        "Elif Akgün",
+        "Yunus Ocak",
+        "Tuğba Boz",
+        "Andaç Yaşar",
+        "Fatih Uluçay",
+        "MercAn Cebe",
+        "Cemre Dağ",
+        "Duygu Akyürek",
+        "Zeynep Ünal",
+        "Betül İlkbaş",
+        "Buket Başol",
+        "Simge Çakır",
+        "Merih Akgünay",
+        "Gizem Nida Çınar",
+        "Birsel Çatık",
+        "Can Aslan",
+        "Ece Köken",
+        "Başak",
+        "Doğukan Tüzün",
+        "Yağmur",
+        "Erkan Pınarbaşı",
+        "Betül",
+        "Çağlar",
+        "Beste Gökoğlu",
+        "Işıl",
+        "Can",
+        "Nuriye",
+        "Özlem Ergün",
+        "Ayşegül",
+        "Flört",
+        "Sis",
+        "Sena Akti",
+        "Sencer Türkiş",
+        "Ateş",
+        "Anıl Özkeleş",
+        "Fatoş",
+        "Sina Tanış",
+        "Fersun Çelikiş",
+        "Neşe",
+        "Kadir Aşk",
+        "İmran Başbuğ",
+        "Başak Savaşçı",
+        "Bulut Barutçu",
+        "Veli Baltacı",
+        "Ege Atıcı",
+        "Burcu Öztuna",
+        "Belgin Koca",
+        "Nesrin Tuna",
+        "Ahmet Bolu",
+        "Gülçin Sarı",
+        "Zehra Gül Konya",
+        "İsmail Bora",
+        "Gönenç Ünlü",
+        "Elif İrem Koç",
+        "Esra Aydoğdu",
+        "Mustafa Özaytaç",
+        "Ümra",
+        "Büşra",
+        "Buğra",
+        "Su",
+        "Cüneyt Gelibolu",
+        "İzmir Üniversitesi",
+        "İzmir",
+        "Üniversite",
+        "Mustafa Kemal Atatürk",
+        "Türkiye",
+        "Amerika Birleşik Devletleri",
+        "Birleşik Krallık",
+        "World Wide Web",
+        "Apple",
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        1000,
+        1000000,
+        1000000000,
+        1000000000000
+    ];
+
+    function clicked() {
+        var first_time = window.performance.now(),
+            input      = document.getElementById("i"),
+            html       = makeBlock(input.value),
+            last_time  = window.performance.now();
+
+        output.innerHTML = html + "<p>" + (last_time - first_time) / 1000 + " seconds for " + input.value + "</p>";
+    }
+
+    function test() {
+        var html       = '',
+            first_time = window.performance.now();
+
+        for(var i = 0; i < Nouns.length; i++) {
+            html += makeBlock(Nouns[i]);
+        }
+
+        var last_time = window.performance.now();
+
+        html += "<p>" + (last_time - first_time) / 1000 + " seconds for <b>" + Nouns.length + " </b>names</p>";
+        output.innerHTML = html;
+    }
+
+    function makeBlock(noun) {
+        var html = '';
+        if(noun == "Apple") {
+            html += "<blockquote>";
+            html += "<b>Belirtme (Accusative) :</b> " + Turkce.accusativeCase("pıl", noun) + "<br>";
+            html += "<b>Yönelme (Dative) :</b> " + Turkce.yonelmeHali("pıl", noun) + "<br>";
+            html += "<b>Bulunma (Locative) :</b> " + Turkce.bulunmaHali("pıl", noun) + "<br>";
+            html += "<b>Ayrılma (Ablative) :</b> " + Turkce.ayrilmaHali("pıl", noun) + "<br>";
+            html += "<b>Sahiplik (Genitive) :</b> " + Turkce.sahiplikHali("pıl", noun) + "<br>";
+            html += "<b>Vasıta (Comitative) :</b> " + Turkce.vasitaHali("pıl", noun) + "<br>";
+            html += "<b>Dahi Bağlacı (Conjunction) :</b> " + Turkce.dahiBaglac("pıl", noun) + "<br>";
+            html += "<b>Sıra Sayı (Ordinal Number) :</b> " + Turkce.siraSayi(noun) + "<br>";
+            html += "<b>Üleştirme (Distributive) :</b> " + Turkce.ulestirme(noun) + "<br>";
+            html += "</blockquote>";
+        } else {
+            html += "<blockquote>";
+            html += "<b>Belirtme (Accusative) :</b> " + Turkce.accusativeCase(noun) + "<br>";
+            html += "<b>Yönelme (Dative) :</b> " + Turkce.yonelmeHali(noun) + "<br>";
+            html += "<b>Bulunma (Locative) :</b> " + Turkce.bulunmaHali(noun) + "<br>";
+            html += "<b>Ayrılma (Ablative) :</b> " + Turkce.ayrilmaHali(noun) + "<br>";
+            html += "<b>Sahiplik (Genitive) :</b> " + Turkce.sahiplikHali(noun) + "<br>";
+            html += "<b>Vasıta (Comitative) :</b> " + Turkce.vasitaHali(noun) + "<br>";
+            html += "<b>Dahi Bağlacı (Conjunction) :</b> " + Turkce.dahiBaglac(noun) + "<br>";
+            html += "<b>Sıra Sayı (Ordinal Number) :</b> " + Turkce.siraSayi(noun) + "<br>";
+            html += "<b>Üleştirme (Distributive) :</b> " + Turkce.ulestirme(noun) + "<br>";
+            html += "</blockquote>";
+        }
+
+        return html;
+    }
+</script>
+</body>
+</html>
