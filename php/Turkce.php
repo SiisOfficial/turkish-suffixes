@@ -8,7 +8,7 @@
  * License: MIT
  * https://github.com/SiisOfficial/turkish-suffixes
  *
- * Version: 1.3
+ * Version: 1.4
  */
 class Turkce {
     /*
@@ -30,6 +30,83 @@ class Turkce {
     private static $vowel          = '/(*UTF8)[oueiöüaıOUEİÖÜAI]/';
     private static $vowelE         = '/(*UTF8)[oueiöüaıOUEİÖÜAI]$/';
 
+    //  This is the simplest & fastest solution for now.
+    //  I really don't want to check last noun of given $noun,
+    //  bacause (for example vive) last noun can be a Turkish brand or something.
+    //  I'd suggest you to use $fake (like Turkce::accusativeCase("yıv", "view");).
+    //
+    //  Only for some brands, people, products, etc.
+    private static $pronounces = [
+        'apple' => 'pıl',
+        'google' => 'gıl',
+        'twitter' => 'tır',
+        'youtube' => 'tup',
+        'chrome' => 'rom',
+        'developer' => 'pır',
+        'appledeveloper' => 'pır',
+        'googledeveloper' => 'pır',
+        'facebookdeveloper' => 'pır',
+        'iphone' => 'fon',
+        'ipad' => 'ped',
+        'watch' => 'voç',
+        'php' => 'çpi',
+        'steam' => 'tim',
+        'valve' => 'alv',
+        'facebookmessenger' => 'cır',
+        'messenger' => 'cır',
+        'snapchat' => 'çet',
+        'chat' => 'çet',
+        'skype' => 'ayp',
+        'unity' => 'iti',
+        'spotify' => 'fay',
+        'htc' => 'ysi',
+        'half-life' => 'ayf',
+        'halflife' => 'ayf',
+        'htcvive' => 'avy',
+        '9gag' => 'geg',
+        'tv' => 'ivi',
+        'appletv' => 'ivi',
+        'usa' => 'sey',
+        'googlemaps' => 'eps',
+        'maps' => 'eps',
+        'cern' => 'örn',
+        'adobe' => 'dob',
+        'imdb' => 'ibi',
+        'italy' => 'ali',
+        'store' => 'tor',
+        'appstore' => 'tor',
+        'playstore' => 'tor',
+        'elonmusk' => 'ask',
+        'einstein' => 'ayn',
+        'xcode' => 'kod',
+        'github' => 'hab',
+        'bitbucket' => 'kıt',
+        'slipknot' => 'nat',
+        'gameofthrones' => 'ons',
+        'beethoven' => 'vın',
+        '$' => 'lar',
+        '€' => 'uro',
+        '₺' => 'ele',
+    ];
+
+    /**
+     * Checks the noun if it has a pronounce in $pronounces
+     *
+     * @param $n
+     * @return bool || string
+     */
+    private static function checkHasPronounce($n) {
+        $n = strtolower(str_replace(' ', '', $n));
+
+        if((substr($n, 0, 1) == "#" || substr($n, 0, 1) == "@") && ($pronounce = self::$pronounces[substr($n, 1)])) {
+            return $pronounce;
+        } else if($pronounce = self::$pronounces[$n]) {
+            return $pronounce;
+        }
+
+        return false;
+    }
+
     /**
      * Accusative case
      *
@@ -39,6 +116,11 @@ class Turkce {
      */
     public static function belirtmeHali($noun, $fake = false) {
         $noun = trim($noun);
+
+        if(!$fake && ($fake_ = self::checkHasPronounce($noun))) {
+            $fake = $noun;
+            $noun = $fake_;
+        }
 
         //  Check the ending if it's a number
         if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
@@ -82,6 +164,11 @@ class Turkce {
     public static function yonelmeHali($noun, $fake = false) {
         $noun = trim($noun);
 
+        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
+            $fake = $noun;
+            $noun = $fake_;
+        }
+
         //  Check the ending if it's a number
         if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
 
@@ -121,6 +208,11 @@ class Turkce {
      */
     public static function bulunmaHali($noun, $fake = false) {
         $noun = trim($noun);
+
+        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
+            $fake = $noun;
+            $noun = $fake_;
+        }
 
         //  Check the ending if it's a number
         if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
@@ -170,6 +262,11 @@ class Turkce {
     public static function ayrilmaHali($noun, $fake = false) {
         $noun = trim($noun);
 
+        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
+            $fake = $noun;
+            $noun = $fake_;
+        }
+
         //  Check the ending if it's a number
         if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
 
@@ -218,6 +315,11 @@ class Turkce {
     public static function sahiplikHali($noun, $fake = false) {
         $noun = trim($noun);
 
+        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
+            $fake = $noun;
+            $noun = $fake_;
+        }
+
         //  Check the ending if it's a number
         if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
 
@@ -256,6 +358,11 @@ class Turkce {
     public static function vasitaHali($noun, $fake = false) {
         $noun = trim($noun);
 
+        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
+            $fake = $noun;
+            $noun = $fake_;
+        }
+
         //  Check the ending if it's a number
         if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
 
@@ -291,6 +398,11 @@ class Turkce {
      */
     public static function dahiBaglac($noun, $fake = false) {
         $noun = trim($noun);
+
+        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
+            $fake = $noun;
+            $noun = $fake_;
+        }
 
         //  Check the ending if it's a number
         if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);

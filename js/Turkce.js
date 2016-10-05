@@ -6,7 +6,7 @@
  * License: MIT
  * https://github.com/SiisOfficial/turkish-suffixes
  *
- * Version: 1.3
+ * Version: 1.4
  */
 var Turkce = {
     /*
@@ -27,15 +27,93 @@ var Turkce = {
     vowelE: /[oueiöüaıOUEİÖÜAI]$/,
     vowelG: /[oueiöüaıOUEİÖÜAI]/g,
 
+    //  This is the simplest & fastest solution for now.
+    //  I really don't want to check last noun of given var noun,
+    //  bacause (for example vive) last noun can be a Turkish brand or something.
+    //  I'd suggest you to use var fake (like Turkce.accusativeCase("yıv", "view");).
+    //
+    //  Only for some brands, people, products, etc.
+    pronounces: {
+        'apple': 'pıl',
+        'google': 'gıl',
+        'twitter': 'tır',
+        'youtube': 'tup',
+        'chrome': 'rom',
+        'developer': 'pır',
+        'appledeveloper': 'pır',
+        'googledeveloper': 'pır',
+        'facebookdeveloper': 'pır',
+        'iphone': 'fon',
+        'ipad': 'ped',
+        'watch': 'voç',
+        'php': 'çpi',
+        'steam': 'tim',
+        'valve': 'alv',
+        'facebookmessenger': 'cır',
+        'messenger': 'cır',
+        'snapchat': 'çet',
+        'chat': 'çet',
+        'skype': 'ayp',
+        'unity': 'iti',
+        'spotify': 'fay',
+        'htc': 'ysi',
+        'half-life': 'ayf',
+        'halflife': 'ayf',
+        'htcvive': 'avy',
+        '9gag': 'geg',
+        'tv': 'ivi',
+        'appletv': 'ivi',
+        'usa': 'sey',
+        'googlemaps': 'eps',
+        'maps': 'eps',
+        'cern': 'örn',
+        'adobe': 'dob',
+        'imdb': 'ibi',
+        'italy': 'ali',
+        'store': 'tor',
+        'appstore': 'tor',
+        'playstore': 'tor',
+        'elonmusk': 'ask',
+        'einstein': 'ayn',
+        'xcode': 'kod',
+        'github': 'hab',
+        'bitbucket': 'kıt',
+        'slipknot': 'nat',
+        'gameofthrones': 'ons',
+        'beethoven': 'vın',
+        '$': 'lar',
+        '€': 'uro',
+        '₺': 'ele'
+    },
+
     /**
      * Checks the fake variable if it's undefined.
      * If so, sets it's default value to false.
      *
      * @param v
-     * @returns {boolean}
+     * @returns {boolean || string}
      */
     isFake: function(v) {
         return (typeof v == "undefined" ? false : v);
+    },
+
+    /**
+     * Checks the noun if it has a pronounce in pronounces
+     *
+     * @param n
+     * @returns {boolean || string}
+     */
+    checkHasPronounce: function(n) {
+        n = n.replace(/ /g, "").toLowerCase();
+        var pronounce;
+
+        if((n.substr(0, 1) == "#" || n.substr(0, 1) == "@") && (pronounce = Turkce.pronounces[n.substr(1)])) {
+            return pronounce;
+        } else if(pronounce = Turkce.pronounces[n]) {
+            return pronounce;
+        }
+
+        return false;
     },
 
     /**
@@ -43,11 +121,17 @@ var Turkce = {
      *
      * @param noun
      * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     * @return string
+     * @returns {string}
      */
     belirtmeHali: function(noun, fake) {
         noun = noun.toString().trim();
         fake = Turkce.isFake(fake);
+        var fake_;
+
+        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
+            fake = noun;
+            noun = fake_;
+        }
 
         //  Check the ending if it's a number
         if(/\d$/.test(noun)) return this.processForNumber(this.belirtmeHali, noun);
@@ -85,11 +169,17 @@ var Turkce = {
      * @param noun
      * @param fake (integer/string if it's a fake noun): this is for pronounce usage
      *
-     * @return string
+     * @returns {string}
      */
     yonelmeHali: function(noun, fake) {
         noun = noun.toString().trim();
         fake = Turkce.isFake(fake);
+        var fake_;
+
+        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
+            fake = noun;
+            noun = fake_;
+        }
 
         //  Check the ending if it's a number
         if(/\d$/.test(noun)) return this.processForNumber(this.yonelmeHali, noun);
@@ -126,11 +216,17 @@ var Turkce = {
      * @param noun
      * @param fake (integer/string if it's a fake noun): this is for pronounce usage
      *
-     * @return string
+     * @returns {string}
      */
     bulunmaHali: function(noun, fake) {
         noun = noun.toString().trim();
         fake = Turkce.isFake(fake);
+        var fake_;
+
+        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
+            fake = noun;
+            noun = fake_;
+        }
 
         //  Check the ending if it's a number
         if(/\d$/.test(noun)) return this.processForNumber(this.bulunmaHali, noun);
@@ -174,11 +270,17 @@ var Turkce = {
      * @param noun
      * @param fake (integer/string if it's a fake noun): this is for pronounce usage
      *
-     * @return string
+     * @returns {string}
      */
     ayrilmaHali: function(noun, fake) {
         noun = noun.toString().trim();
         fake = Turkce.isFake(fake);
+        var fake_;
+
+        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
+            fake = noun;
+            noun = fake_;
+        }
 
         //  Check the ending if it's a number
         if(/\d$/.test(noun)) return this.processForNumber(this.ayrilmaHali, noun);
@@ -222,11 +324,17 @@ var Turkce = {
      * @param noun
      * @param fake (integer/string if it's a fake noun): this is for pronounce usage
      *
-     * @return string
+     * @returns {string}
      */
     sahiplikHali: function(noun, fake) {
         noun = noun.toString().trim();
         fake = Turkce.isFake(fake);
+        var fake_;
+
+        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
+            fake = noun;
+            noun = fake_;
+        }
 
         //  Check the ending if it's a number
         if(/\d$/.test(noun)) return this.processForNumber(this.sahiplikHali, noun);
@@ -242,7 +350,7 @@ var Turkce = {
         var vovels = last_3_letter.match(Turkce.vowelG),
             suffix = "i";
 
-        if(vovels == null) return (noun + "'" + blending + suffix);
+        if(vovels == null) return (noun + "'" + blending + suffix + "n");
 
         if(/[öüÖÜ]/.test(vovels[(vovels.length) - 1])) suffix = "ü";
         if(/[aıAI]/.test(vovels[(vovels.length) - 1])) suffix = "ı";
@@ -261,11 +369,17 @@ var Turkce = {
      * @param noun
      * @param fake (integer/string if it's a fake noun): this is for pronounce usage
      *
-     * @return string
+     * @returns {string}
      */
     vasitaHali: function(noun, fake) {
         noun = noun.toString().trim();
         fake = Turkce.isFake(fake);
+        var fake_;
+
+        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
+            fake = noun;
+            noun = fake_;
+        }
 
         //  Check the ending if it's a number
         if(/\d$/.test(noun)) return this.processForNumber(this.vasitaHali, noun);
@@ -297,11 +411,17 @@ var Turkce = {
      * @param noun
      * @param fake (integer/string if it's a fake noun): this is for pronounce usage
      *
-     * @return string
+     * @returns {string}
      */
     dahiBaglac: function(noun, fake) {
         noun = noun.toString().trim();
         fake = Turkce.isFake(fake);
+        var fake_;
+
+        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
+            fake = noun;
+            noun = fake_;
+        }
 
         //  Check the ending if it's a number
         if(/\d$/.test(noun)) return this.processForNumber(this.dahiBaglac, noun);
@@ -333,7 +453,7 @@ var Turkce = {
      * !Warning: Don't give integer when you directly call this method, because it'll override the number with your integer.
      *           This is mostly for internal use (see processForNumber())
      *
-     * @return string
+     * @returns {string}
      */
     siraSayi: function(number, integer) {
         number  = number.toString().trim();
@@ -377,7 +497,7 @@ var Turkce = {
      * !Warning: Don't give integer when you directly call this method, because it'll override the number with your integer.
      *           This is mostly for internal use (see processForNumber())
      *
-     * @return string
+     * @returns {string}
      */
     ulestirme: function(number, integer) {
         number  = number.toString().trim();
@@ -415,7 +535,7 @@ var Turkce = {
      *
      * @param callback
      * @param noun
-     * @returns {*}
+     * @returns {string}
      */
     processForNumber: function(callback, noun) {
         if(typeof callback == "undefined") callback = this.belirtmeHali;

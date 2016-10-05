@@ -6,7 +6,7 @@
  * License: MIT
  * https://github.com/SiisOfficial/turkish-suffixes
  *
- * Version: 1.3
+ * Version: 1.4
  */
 using System;
 using System.Collections.Generic;
@@ -30,6 +30,66 @@ class Turkce {
     static string vowel = "[oueiöüaıOUEİÖÜAI]";
     static string vowelE = "[oueiöüaıOUEİÖÜAI]$";
 
+    //  This is the simplest & fastest solution for now.
+    //  I really don't want to check last noun of given string noun,
+    //  bacause (for example vive) last noun can be a Turkish brand or something.
+    //  I'd suggest you to use string fake (like Turkce.accusativeCase("yıv", "view");).
+    //
+    //  Only for some brands, people, products, etc.
+    static Dictionary<string, string> pronounces = new Dictionary<string, string>()
+    {
+        {"apple", "pıl"},
+        {"google", "gıl"},
+        {"twitter", "tır"},
+        {"youtube", "tup"},
+        {"chrome", "rom"},
+        {"developer", "pır"},
+        {"appledeveloper", "pır"},
+        {"googledeveloper", "pır"},
+        {"facebookdeveloper", "pır"},
+        {"iphone", "fon"},
+        {"ipad", "ped"},
+        {"watch", "voç"},
+        {"php", "çpi"},
+        {"steam", "tim"},
+        {"valve", "alv"},
+        {"facebookmessenger", "cır"},
+        {"messenger", "cır"},
+        {"snapchat", "çet"},
+        {"chat", "çet"},
+        {"skype", "ayp"},
+        {"unity", "iti"},
+        {"spotify", "fay"},
+        {"htc", "ysi"},
+        {"half-life", "ayf"},
+        {"halflife", "ayf"},
+        {"htcvive", "avy"},
+        {"9gag", "geg"},
+        {"tv", "ivi"},
+        {"appletv", "ivi"},
+        {"usa", "sey"},
+        {"googlemaps", "eps"},
+        {"maps", "eps"},
+        {"cern", "örn"},
+        {"adobe", "dob"},
+        {"imdb", "ibi"},
+        {"italy", "ali"},
+        {"store", "tor"},
+        {"appstore", "tor"},
+        {"playstore", "tor"},
+        {"elonmusk", "ask"},
+        {"einstein", "ayn"},
+        {"xcode", "kod"},
+        {"github", "hab"},
+        {"bitbucket", "kıt"},
+        {"slipknot", "nat"},
+        {"gameofthrones", "ons"},
+        {"beethoven", "vın"},
+        {"$", "lar"},
+        {"€", "uro"},
+        {"₺", "ele"}
+    };
+
 
     /// <summary>
     /// Checks the fake string if it's empty or not.
@@ -38,6 +98,25 @@ class Turkce {
     /// <returns>bool</returns>
     private static bool checkFake(string v) {
         return (v == "" ? false : true);
+    }
+
+
+    /// <summary>
+    /// Checks the noun if it has a pronounce in pronounces
+    /// </summary>
+    /// <param name="n"></param>
+    /// <returns>bool || string</returns>
+    private static object checkHasPronounce(string n) {
+        n = n.Replace(" ", "").ToLower();
+        string pronounce;
+
+        if((n.Substring(0, 1) == "#" || n.Substring(0, 1) == "@") && pronounces.TryGetValue(n.Substring(1), out pronounce)) {
+            return pronounce;
+        } else if(pronounces.TryGetValue(n, out pronounce)) {
+            return pronounce;
+        }
+
+        return null;
     }
 
 
@@ -51,13 +130,6 @@ class Turkce {
         if(char_length >= noun.Length) return noun;
         return noun.Substring(noun.Length - char_length);
     }
-
-
-    /**
-
-           Accusative Case
-
-     */
 
 
     /// <summary>
@@ -97,6 +169,15 @@ class Turkce {
         noun = noun.Trim();
         bool isFake = checkFake(fake);
 
+        if(!isFake) {
+            object fake_ = Turkce.checkHasPronounce(noun);
+            if(fake_ != null) {
+                fake = noun;
+                isFake = true;
+                noun = fake_.ToString();
+            }
+        }
+
         //  Check the ending if it's a number
         if(Regex.IsMatch(noun, @"\d$")) return processForNumber(belirtmeHali, noun);
 
@@ -126,13 +207,6 @@ class Turkce {
     public static string accusativeCase(string noun, string fake) {
         return belirtmeHali(noun, fake);
     }
-
-
-    /**
-
-           Dative Case
-
-     */
 
 
     /// <summary>
@@ -172,6 +246,15 @@ class Turkce {
         noun = noun.Trim();
         bool isFake = checkFake(fake);
 
+        if(!isFake) {
+            object fake_ = Turkce.checkHasPronounce(noun);
+            if(fake_ != null) {
+                fake = noun;
+                isFake = true;
+                noun = fake_.ToString();
+            }
+        }
+
         //  Check the ending if it's a number
         if(Regex.IsMatch(noun, @"\d$")) return processForNumber(yonelmeHali, noun);
 
@@ -199,13 +282,6 @@ class Turkce {
     public static string dativeCase(string noun, string fake) {
         return yonelmeHali(noun, fake);
     }
-
-
-    /**
-
-           Locative Case
-
-     */
 
 
     /// <summary>
@@ -245,6 +321,15 @@ class Turkce {
         noun = noun.Trim();
         bool isFake = checkFake(fake);
 
+        if(!isFake) {
+            object fake_ = Turkce.checkHasPronounce(noun);
+            if(fake_ != null) {
+                fake = noun;
+                isFake = true;
+                noun = fake_.ToString();
+            }
+        }
+
         //  Check the ending if it's a number
         if(Regex.IsMatch(noun, @"\d$")) return processForNumber(bulunmaHali, noun);
 
@@ -281,13 +366,6 @@ class Turkce {
     public static string locativeCase(string noun, string fake) {
         return bulunmaHali(noun, fake);
     }
-
-
-    /**
-
-           Ablative Case
-
-     */
 
 
     /// <summary>
@@ -327,6 +405,15 @@ class Turkce {
         noun = noun.Trim();
         bool isFake = checkFake(fake);
 
+        if(!isFake) {
+            object fake_ = Turkce.checkHasPronounce(noun);
+            if(fake_ != null) {
+                fake = noun;
+                isFake = true;
+                noun = fake_.ToString();
+            }
+        }
+
         //  Check the ending if it's a number
         if(Regex.IsMatch(noun, @"\d$")) return processForNumber(ayrilmaHali, noun);
 
@@ -363,13 +450,6 @@ class Turkce {
     public static string ablativeCase(string noun, string fake) {
         return ayrilmaHali(noun, fake);
     }
-
-
-    /**
-
-           Genitive Case
-
-     */
 
 
     /// <summary>
@@ -409,6 +489,15 @@ class Turkce {
         noun = noun.Trim();
         bool isFake = checkFake(fake);
 
+        if(!isFake) {
+            object fake_ = Turkce.checkHasPronounce(noun);
+            if(fake_ != null) {
+                fake = noun;
+                isFake = true;
+                noun = fake_.ToString();
+            }
+        }
+
         //  Check the ending if it's a number
         if(Regex.IsMatch(noun, @"\d$")) return processForNumber(sahiplikHali, noun);
 
@@ -435,13 +524,6 @@ class Turkce {
     public static string genitiveCase(string noun, string fake) {
         return sahiplikHali(noun, fake);
     }
-
-
-    /**
-
-           Comitative Case
-
-     */
 
 
     /// <summary>
@@ -481,6 +563,15 @@ class Turkce {
         noun = noun.Trim();
         bool isFake = checkFake(fake);
 
+        if(!isFake) {
+            object fake_ = Turkce.checkHasPronounce(noun);
+            if(fake_ != null) {
+                fake = noun;
+                isFake = true;
+                noun = fake_.ToString();
+            }
+        }
+
         //  Check the ending if it's a number
         if(Regex.IsMatch(noun, @"\d$")) return processForNumber(vasitaHali, noun);
 
@@ -505,13 +596,6 @@ class Turkce {
     public static string comitativeCase(string noun, string fake) {
         return vasitaHali(noun, fake);
     }
-
-
-    /**
-
-           Conjuction
-
-     */
 
 
     /// <summary>
@@ -551,6 +635,15 @@ class Turkce {
         noun = noun.Trim();
         bool isFake = checkFake(fake);
 
+        if(!isFake) {
+            object fake_ = Turkce.checkHasPronounce(noun);
+            if(fake_ != null) {
+                fake = noun;
+                isFake = true;
+                noun = fake_.ToString();
+            }
+        }
+
         //  Check the ending if it's a number
         if(Regex.IsMatch(noun, @"\d$")) return processForNumber(dahiBaglac, noun);
 
@@ -574,12 +667,18 @@ class Turkce {
     }
 
 
-    /**
+    /// <summary>
+    /// Ordinal Number
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns>string</returns>
+    public static string siraSayi(int number) {
+        return siraSayi(number.ToString(), "");
+    }
 
-           Ordinal Number
-
-     */
-
+    public static string ordinalNumber(int number) {
+        return siraSayi(number.ToString(), "");
+    }
 
     /// <summary>
     /// Ordinal Number
@@ -598,24 +697,10 @@ class Turkce {
     /// Ordinal Number
     /// </summary>
     /// <param name="number"></param>
-    /// <param name="integer"></param>
-    /// <returns>string</returns>
-    public static string siraSayi(string number, bool integer) {
-        return siraSayi(number, "");
-    }
-
-    public static string ordinalNumber(string number, bool integer) {
-        return siraSayi(number, "");
-    }
-
-    /// <summary>
-    /// Ordinal Number
-    /// </summary>
-    /// <param name="number"></param>
     /// <param name="integer">if it's a integer, use "'", otherwise don't.</param>
     ///
     /// !Warning: Don't give integer when you directly call this method, because it'll override the number with your integer.
-    ///           This is mostly for internal use (see processForNumber())
+    /// This is mostly for internal use (see processForNumber())
     ///
     /// <returns>string</returns>
     public static string siraSayi(string number, string integer) {
@@ -637,7 +722,7 @@ class Turkce {
         var vowels = Regex.Matches(last_3_letter, vowel);
         string suffix = "i";
 
-        if(vowels.Count == 0) return (number + (integer ? "'" : "") + blending + "nc" + suffix);
+        if(vowels.Count == 0) return (number + (isFake ? "'" : "") + blending + "nc" + suffix);
 
         if(Regex.IsMatch(vowels[vowels.Count - 1].ToString(), "[öüÖÜ]")) suffix = "ü";
         if(Regex.IsMatch(vowels[vowels.Count - 1].ToString(), "[aıAI]")) suffix = "ı";
@@ -645,7 +730,7 @@ class Turkce {
 
         if(!Regex.IsMatch(last_letter, vowel)) blending = suffix; else blending = "";
 
-        return (number + (integer ? "'" : "") + blending + "nc" + suffix);
+        return (number + (isFake ? "'" : "") + blending + "nc" + suffix);
     }
 
     public static string ordinalNumber(string number, string integer) {
@@ -653,12 +738,18 @@ class Turkce {
     }
 
 
-    /**
+    /// <summary>
+    /// Distributive
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns>string</returns>
+    public static string ulestirme(int number) {
+        return ulestirme(number.ToString(), "");
+    }
 
-           Distributive
-
-     */
-
+    public static string distributive(int number) {
+        return ulestirme(number.ToString(), "");
+    }
 
     /// <summary>
     /// Distributive
@@ -677,24 +768,10 @@ class Turkce {
     /// Distributive
     /// </summary>
     /// <param name="number"></param>
-    /// <param name="integer"></param>
-    /// <returns>string</returns>
-    public static string ulestirme(string number, bool integer) {
-        return ulestirme(number, "");
-    }
-
-    public static string distributive(string number, bool integer) {
-        return ulestirme(number, "");
-    }
-
-    /// <summary>
-    /// Distributive
-    /// </summary>
-    /// <param name="number"></param>
     /// <param name="integer">if it's a integer, use "'", otherwise don't.</param>
     ///
     /// !Warning: Don't give integer when you directly call this method, because it'll override the number with your integer.
-    ///           This is mostly for internal use (see processForNumber())
+    /// This is mostly for internal use (see processForNumber())
     ///
     /// <returns>string</returns>
     public static string ulestirme(string number, string integer) {
@@ -716,25 +793,18 @@ class Turkce {
         var vowels = Regex.Matches(last_3_letter, vowel);
         string suffix = "e";
 
-        if(vowels.Count == 0) return (number + (integer ? "'" : "") + blending + suffix + "r");
+        if(vowels.Count == 0) return (number + (isFake ? "'" : "") + blending + suffix + "r");
 
         if(Regex.IsMatch(vowels[vowels.Count - 1].ToString(), "[ouaıOUAI]")) suffix = "a";
 
         if(Regex.IsMatch(last_letter, vowel)) blending = "ş";
 
-        return (number + (integer ? "'" : "") + blending + suffix + "r");
+        return (number + (isFake ? "'" : "") + blending + suffix + "r");
     }
 
     public static string distributive(string number, string integer) {
         return ulestirme(number, integer);
     }
-
-
-    /**
-
-           Number Processing
-
-     */
 
 
     /// <summary>

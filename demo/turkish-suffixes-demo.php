@@ -126,6 +126,7 @@ $Nouns = array(
     "Birleşik Krallık",
     "World Wide Web",
     "Apple",
+    "World",
     1,
     2,
     3,
@@ -181,15 +182,15 @@ if(isset($_GET['stress'])) {
 }
 
 function makeBlock($noun) {
-    if($noun == "Apple") {
+    if($noun == "World") {
         echo "<blockquote>";
-        echo "<b>Belirtme (Accusative) :</b> " . Turkce::accusativeCase("pıl", $noun) . "<br>";
-        echo "<b>Yönelme (Dative) :</b> " . Turkce::yonelmeHali("pıl", $noun) . "<br>";
-        echo "<b>Bulunma (Locative) :</b> " . Turkce::bulunmaHali("pıl", $noun) . "<br>";
-        echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali("pıl", $noun) . "<br>";
-        echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali("pıl", $noun) . "<br>";
-        echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali("pıl", $noun) . "<br>";
-        echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac("pıl", $noun) . "<br>";
+        echo "<b>Belirtme (Accusative) :</b> " . Turkce::accusativeCase("öld", $noun) . "<br>";
+        echo "<b>Yönelme (Dative) :</b> " . Turkce::yonelmeHali("öld", $noun) . "<br>";
+        echo "<b>Bulunma (Locative) :</b> " . Turkce::bulunmaHali("öld", $noun) . "<br>";
+        echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali("öld", $noun) . "<br>";
+        echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali("öld", $noun) . "<br>";
+        echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali("öld", $noun) . "<br>";
+        echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac("öld", $noun) . "<br>";
         echo "<b>Sıra Sayı (Ordinal Number) :</b> " . Turkce::siraSayi($noun) . "<br>";
         echo "<b>Üleştirme (Distributive) :</b> " . Turkce::ulestirme($noun) . "<br>";
         echo "</blockquote>";

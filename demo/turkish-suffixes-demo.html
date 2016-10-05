@@ -129,6 +129,7 @@
         "Birleşik Krallık",
         "World Wide Web",
         "Apple",
+        "World",
         1,
         2,
         3,
@@ -179,15 +180,15 @@
 
     function makeBlock(noun) {
         var html = '';
-        if(noun == "Apple") {
+        if(noun == "World") {
             html += "<blockquote>";
-            html += "<b>Belirtme (Accusative) :</b> " + Turkce.accusativeCase("pıl", noun) + "<br>";
-            html += "<b>Yönelme (Dative) :</b> " + Turkce.yonelmeHali("pıl", noun) + "<br>";
-            html += "<b>Bulunma (Locative) :</b> " + Turkce.bulunmaHali("pıl", noun) + "<br>";
-            html += "<b>Ayrılma (Ablative) :</b> " + Turkce.ayrilmaHali("pıl", noun) + "<br>";
-            html += "<b>Sahiplik (Genitive) :</b> " + Turkce.sahiplikHali("pıl", noun) + "<br>";
-            html += "<b>Vasıta (Comitative) :</b> " + Turkce.vasitaHali("pıl", noun) + "<br>";
-            html += "<b>Dahi Bağlacı (Conjunction) :</b> " + Turkce.dahiBaglac("pıl", noun) + "<br>";
+            html += "<b>Belirtme (Accusative) :</b> " + Turkce.accusativeCase("öld", noun) + "<br>";
+            html += "<b>Yönelme (Dative) :</b> " + Turkce.yonelmeHali("öld", noun) + "<br>";
+            html += "<b>Bulunma (Locative) :</b> " + Turkce.bulunmaHali("öld", noun) + "<br>";
+            html += "<b>Ayrılma (Ablative) :</b> " + Turkce.ayrilmaHali("öld", noun) + "<br>";
+            html += "<b>Sahiplik (Genitive) :</b> " + Turkce.sahiplikHali("öld", noun) + "<br>";
+            html += "<b>Vasıta (Comitative) :</b> " + Turkce.vasitaHali("öld", noun) + "<br>";
+            html += "<b>Dahi Bağlacı (Conjunction) :</b> " + Turkce.dahiBaglac("öld", noun) + "<br>";
             html += "<b>Sıra Sayı (Ordinal Number) :</b> " + Turkce.siraSayi(noun) + "<br>";
             html += "<b>Üleştirme (Distributive) :</b> " + Turkce.ulestirme(noun) + "<br>";
             html += "</blockquote>";

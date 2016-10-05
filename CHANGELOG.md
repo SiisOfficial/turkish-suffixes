@@ -1,3 +1,13 @@
+## 1.4 (2016-10-06)
+Features:
+
+- Added pronounce check (with hashtag and mention support) for some brands, people, products, etc. for proper suffixes.
+
+Bugfixes:
+
+- Fixed suffix letter for genitive case in JS.
+- Fixed problems with distributive and ordinal number methods in C#.
+
 ## 1.3 (2016-10-05)
 
 Features:
