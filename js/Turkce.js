@@ -6,7 +6,9 @@
  * License: MIT
  * https://github.com/SiisOfficial/turkish-suffixes
  *
- * Version: 1.4
+ * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
+ *
+ * Version: 1.4.1
  */
 var Turkce = {
     /*
@@ -485,7 +487,7 @@ var Turkce = {
         return (number + (integer ? "'" : "") + blending + "nc" + suffix);
     },
     ordinalNumber: function(number, integer) {
-        return this.dahiBaglac(number);
+        return this.siraSayi(number);
     },
 
     /**

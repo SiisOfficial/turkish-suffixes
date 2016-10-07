@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <title data-i18n="title">Turkish Suffixes Demo</title>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: white;
+            font-size: 15px;
+            color: #333;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        header {
+            background: #01ADD0;
+            height: 3rem;
+            padding: 1rem 1rem 1rem 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+            line-height: 3rem;
+            font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 .1rem .75rem rgba(0, 0, 0, .5);
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: inherit;
+            padding: 0;
+            margin: 0;
+            font-weight: inherit;
+            display: inline;
+        }
+
+        small {
+            margin-left: .25rem;
+            font-size: 1rem;
+        }
+
+        form {
+            background: #424242;
+            color: white;
+            padding: 2rem 1rem 0 1rem;
+            position: relative;
+            z-index: 0;
+            box-shadow: 0 0 .33rem rgba(0, 0, 0, .33);
+            overflow: hidden;
+        }
+
+        div {
+            display: block;
+            overflow: hidden;
+        }
+
+        div + div {
+            margin-top: .5rem;
+            padding-bottom: 2rem;
+            width: 56.5rem;
+        }
+
+        input {
+            height: 1.33rem;
+            line-height: 1.33rem;
+            background: white;
+            border: none;
+            padding: .5rem;
+            font-size: 1rem;
+            float: left;
+            font-family: 'Open Sans', sans-serif;
+            width: 20rem;
+        }
+
+        #noun {
+            width: 12rem;
+        }
+
+        input + input {
+            margin-left: .5rem;
+        }
+
+        select {
+            height: 2.33rem;
+            line-height: 1.33rem;
+            background: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1rem;
+            float: left;
+            border-radius: 0;
+            width: 13rem;
+            margin-left: 21.5rem;
+        }
+
+        button {
+            font-size: 1rem;
+            height: 2.33rem;
+            padding: 0 1.5rem;
+            line-height: 1.33rem;
+            background: lavender;
+            border-radius: .2rem;
+            text-align: center;
+            color: #333;
+            border: none;
+            float: right;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 .1rem .33rem rgba(0, 0, 0, .67);
+            transition: .33s ease-out;
+            margin-right: .5rem;
+        }
+
+        button:hover {
+            box-shadow: 0 .2rem .67rem rgba(0, 0, 0, .5);
+        }
+
+        section {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        code {
+            display: block;
+            padding: 1.5rem;
+            font-size: 1rem;
+            background: gainsboro;
+            color: #636363;
+        }
+
+        code h3 {
+            margin-top: 0;
+        }
+
+        code span + h3 {
+            margin-top: 1rem;
+        }
+
+        code .class {
+            color: #787878 !important;
+        }
+
+        code .function {
+            color: darkorange !important;
+        }
+
+        code .string {
+            color: darkgreen !important;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 1.33rem;
+            font-size: .9rem;
+            padding: 1rem 1rem 1rem 1.5rem;
+        }
+
+        .lang-change-group {
+            float: left;
+        }
+
+        a:link {
+            color: #333;
+        }
+
+        a.disabled {
+            color: #999;
+            cursor: default;
+            text-decoration: none !important;
+        }
+
+        a:nth-last-of-type(1) {
+            margin-right: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1 data-i18n="title">Turkish Suffixes Demo</h1>
+    <small data-i18n="siis">by Siis</small>
+</header>
+<form>
+    <div>
+        <input type="text" data-i18n="first" id="first" name="first" value="Bu" placeholder="First part">
+        <input type="text" data-i18n="noun" id="noun" name="noun" value="Demo" placeholder="Noun/Number">
+        <input type="text" data-i18n="last" id="last" name="last" value="hoşgeldiniz" placeholder="Last part">
+    </div>
+    <div>
+        <select name="type">
+            <option data-i18n="accusative" value="accusativeCase">Accusative Case</option>
+            <option data-i18n="dative" value="dativeCase" selected>Dative Case</option>
+            <option data-i18n="locative" value="locativeCase">Locative Case</option>
+            <option data-i18n="ablative" value="ablativeCase">Ablative Case</option>
+            <option data-i18n="genitive" value="genitiveCase">Genitive Case</option>
+            <option data-i18n="comitative" value="comitativeCase">Comitative Case</option>
+            <option data-i18n="conjunction" value="conjunction">Conjunction</option>
+            <option data-i18n="ordinalNumber" value="ordinalNumber">Ordinal Number</option>
+            <option data-i18n="distributive" value="distributive">Distributive</option>
+        </select>
+        <button type="submit" data-i18n="change">Update</button>
+    </div>
+</form>
+<section id="output">
+
+</section>
+<code>
+
+</code>
+<footer>
+    <span class="lang-change-group">
+        <a href="#" class="change-lang disabled" data-lang="en">English</a> / <a href="#" class="change-lang" data-lang="tr">Türkçe</a>
+    </span>
+    <a class="github-button" href="https://github.com/SiisOfficial/turkish-suffixes" aria-label="View on GitHub">View on GitHub</a>
+</footer>
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600|Quicksand:400" rel="stylesheet">
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="../js/Turkce.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+    var i18n = {
+        en: {
+            title: "Turkish Suffixes Demo",
+            siis: "by Siis",
+            first: "First part",
+            noun: "Noun/Number",
+            last: "Last part",
+            accusative: "Accusative Case",
+            dative: "Dative Case",
+            locative: "Locative Case",
+            ablative: "Ablative Case",
+            genitive: "Genitive Case",
+            comitative: "Comitative Case",
+            conjunction: "Conjunction",
+            ordinalNumber: "Ordinal Number",
+            distributive: "Distributive",
+            accusativeCase_: "accusativeCase",
+            dativeCase_: "dativeCase",
+            locativeCase_: "locativeCase",
+            ablativeCase_: "ablativeCase",
+            genitiveCase_: "genitiveCase",
+            comitativeCase_: "comitativeCase",
+            conjunction_: "conjunction",
+            ordinalNumber_: "ordinalNumber",
+            distributive_: "distributive",
+            github: "View on GitHub",
+            change: "Update"
+        },
+        tr: {
+            title: "Türkçe Ekleri Demo'su",
+            siis: "Siis sunar",
+            first: "İlk kısım",
+            noun: "İsim/Sayı",
+            last: "Son kısım",
+            accusative: "Belirtme Hali",
+            dative: "Yönelme Hali",
+            locative: "Bulunma Hali",
+            ablative: "Ayrılma Hali",
+            genitive: "Sahiplik Hali",
+            comitative: "Vasıta Hali",
+            conjunction: "Dahi Bağlacı",
+            ordinalNumber: "Sıra Sayı",
+            distributive: "Üleştirme",
+            accusativeCase_: "belirtmeHali",
+            dativeCase_: "yonelmeHali",
+            locativeCase_: "bulunmaHali",
+            ablativeCase_: "ayrilmaHali",
+            genitiveCase_: "sahiplikHali",
+            comitativeCase_: "vasitaHali",
+            conjunction_: "dahiBaglac",
+            ordinalNumber_: "siraSayi",
+            distributive_: "ulestirme",
+            github: "GitHub'da İncele",
+            change: "Güncelle"
+        }
+    };
+    var generateCode = {
+        h3: function(lang) {
+            return '<h3>' + lang + '</h3>';
+        },
+        class: function() {
+            return '<span class="class">Turkce</span>';
+        },
+        function: function(func, string) {
+            return '<span class="function">' + func + '(</span>' + this.string(string) + '<span class="function">)</span>';
+        },
+        string: function(string) {
+            return '<span class="string">"' + string + '"</span>';
+        },
+        php: function(func, string) {
+            return this.h3("PHP") + this.class() + '::' + this.function(func, string) + ';';
+        },
+        js: function(func, string) {
+            return this.h3("JavaScript") + this.class() + '.' + this.function(func, string) + ';';
+        },
+        cs: function(func, string) {
+            return this.h3("C#") + this.class() + '.' + this.function(func, string) + ';';
+        }
+    };
+
+    /**
+     * I'm too lazy to make a url parser function,
+     * so I had used this: http://stackoverflow.com/a/5158301
+     *
+     * @param name
+     * @returns {Array|{index: number, input: string}|string}
+     */
+    function getParameterByName(name) {
+        var match = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+        return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+    }
+
+    $(document).ready(function() {
+        var output     = $('#output'),
+            first      = $('#first'),
+            noun       = $('#noun'),
+            last       = $('#last'),
+            type       = $('select'),
+            form       = $('form'),
+            dI18ns     = $('[data-i18n]'),
+            langChange = $('.change-lang'),
+            code       = $('code'),
+            activelang = "en";
+
+        function Localize(lang) {
+            dI18ns.each(function() {
+                var t = $(this);
+
+                if(t.tagName == "input") {
+                    t.attr('placeholder', i18n[lang][t.data('i18n')]);
+                } else {
+                    t.html(i18n[lang][t.data('i18n')]);
+                }
+            });
+            activelang = lang;
+
+            renderOutput(getNoun());
+        }
+
+        function fillFromUrl() {
+            var f = getParameterByName("first"),
+                n = getParameterByName("noun"),
+                l = getParameterByName("last"),
+                t = getParameterByName("type");
+
+            if(f != null) first.val(f);
+            if(n != null) noun.val(n);
+            if(l != null) last.val(l);
+            if(t != null && type.find('[value=' + t + ']').length) type.val(t);
+
+        }
+
+        function renderOutput(n) {
+            output.html(
+                    first.val() + ' <b>'
+                    + n + '</b> '
+                    + last.val()
+            );
+            code.html(
+                    generateCode.php(i18n[activelang][type.val() + '_'], noun.val()) +
+                    generateCode.js(i18n[activelang][type.val() + '_'], noun.val()) +
+                    generateCode.cs(i18n[activelang][type.val() + '_'], noun.val())
+            );
+        }
+
+        function getNoun() {
+            return Turkce[type.val()](noun.val());
+        }
+
+        form.on('submit', function(e) {
+            e.preventDefault();
+            history.pushState(null, "", "?" + form.serialize());
+
+            renderOutput(getNoun());
+        });
+
+        $('input, select').on('change', function() {
+            form.submit();
+        });
+
+        langChange.on('click', function(e) {
+            e.preventDefault();
+            var t    = $(this),
+                lang = t.data('lang');
+
+            if(t.hasClass('disabled')) return;
+
+            Localize(lang);
+            langChange.toggleClass('disabled');
+        });
+
+        fillFromUrl();
+        renderOutput(getNoun());
+
+        $(window).on('popstate', function() {
+            fillFromUrl();
+            renderOutput(getNoun());
+        });
+    });
+</script>
+</body>
+</html>

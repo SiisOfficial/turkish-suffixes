@@ -6,7 +6,9 @@
  * License: MIT
  * https://github.com/SiisOfficial/turkish-suffixes
  *
- * Version: 1.4
+ * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
+ *
+ * Version: 1.4.1
  */
 using System;
 using System.Collections.Generic;

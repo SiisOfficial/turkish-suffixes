@@ -1,3 +1,12 @@
+## 1.4.1 (2016-10-07)
+Features:
+
+- Added full-js-demo.html (http://siis.com.tr/turkish-suffixes page) for detailed usage and demo.
+
+Bugfixes:
+
+- Fixed ordinalNumber function in JS.
+
 ## 1.4 (2016-10-06)
 Features:
 
