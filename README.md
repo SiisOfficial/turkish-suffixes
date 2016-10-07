@@ -19,7 +19,7 @@ _(Lütfen tüm isimlerde kusursuz sonuç veremeyeceğini unutmayın. Türkçe zo
 
 # Usage | Kullanım
 
-_For full usage example and performance info, please see the demo file._
+_For full usage example and performance info, please see the demo files or check http://siis.com.tr/turkish-suffixes page._
 
 It's actually very easy, just include Turkce to you project, like:
 
@@ -48,7 +48,7 @@ That's all folks!
 
 --
 
-_Lütfen tam kullanım örnekleri ve performans bilgisi için demo dosyasına göz atın._
+_Lütfen tam kullanım örnekleri ve performans bilgisi için demo dosyalarına ya da http://siis.com.tr/turkish-suffixes sayfasına göz atın._
 
 Aslında oldukça basit, sadece Turkce'yi projenize dahil edin, mesela:
 

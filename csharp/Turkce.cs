@@ -8,7 +8,7 @@
  *
  * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
  *
- * Version: 1.4.1
+ * Version: 1.4.2
  */
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ class Turkce {
     |
     */
 
-    static string nounPhraseEnds = "(?i)oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|odası$|leri$";
+    static string nounPhraseEnds = "(?i)oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|odası$|leri$|ları$|lari$";
     static string vowel = "[oueiöüaıOUEİÖÜAI]";
     static string vowelE = "[oueiöüaıOUEİÖÜAI]$";
 
@@ -49,9 +49,15 @@ class Turkce {
         {"appledeveloper", "pır"},
         {"googledeveloper", "pır"},
         {"facebookdeveloper", "pır"},
+        {"googlecardboard", "ord"},
+        {"cardboard", "ord"},
         {"iphone", "fon"},
         {"ipad", "ped"},
         {"watch", "voç"},
+        {"appleiphone", "fon"},
+        {"appleipad", "ped"},
+        {"applewatch", "voç"},
+        {"imessage", "sıc"},
         {"php", "çpi"},
         {"steam", "tim"},
         {"valve", "alv"},
@@ -85,8 +91,23 @@ class Turkce {
         {"github", "hab"},
         {"bitbucket", "kıt"},
         {"slipknot", "nat"},
+        {"ironmaiden", "dın"},
+        {"slayer", "yır"},
         {"gameofthrones", "ons"},
+        {"thesimpsons", "ıns"},
+        {"familyguy", "gay"},
+        {"starwars", "ors"},
+        {"darthvader", "dır"},
         {"beethoven", "vın"},
+        {"vr", "yar"},
+        {"playstationvr", "yar"},
+        {"gearvr", "yar"},
+        {"googlevr", "yar"},
+        {"steamvr", "yar"},
+        {"osvr", "yar"},
+        {"vrfirst", "öst"},
+        {"unrealengine", "cin"},
+        {"cryengine", "cin"},
         {"$", "lar"},
         {"€", "uro"},
         {"₺", "ele"}
