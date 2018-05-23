@@ -8,7 +8,7 @@
  *
  * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
  *
- * Version: 1.4.2
+ * Version: 1.5
  */
 var Turkce = {
     /*
@@ -24,7 +24,26 @@ var Turkce = {
      |
      */
 
-    nounPhraseEnds: /oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|odası$|leri$|ları$|lari$/i,
+    nounPhraseEnds: /oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|leri$|ları$|lari$|üğü$/i,
+
+    //  This is a backup solution for noun phrases.
+    //  We'll directly look for the last word.
+    //  If var nouns count is more than one
+    //  and var last_noun (word) is in this array,
+    //  it's probably a noun phrase.
+    nounPhraseWords: [
+        'okulu',
+        'odası',
+        'güzeli',
+        'paneli',
+        'suyu',
+        'denizi',
+        'gölü',
+        'yolu',
+        'lisesi',
+        'oğlu'
+    ],
+
     vowel: /[oueiöüaıOUEİÖÜAI]/,
     vowelE: /[oueiöüaıOUEİÖÜAI]$/,
     vowelG: /[oueiöüaıOUEİÖÜAI]/g,
@@ -163,13 +182,16 @@ var Turkce = {
             last_3_letter    = noun.substr(-3, 3),
             nouns            = noun.split(' '),
             noun_length      = nouns.length,
-            last_noun_length = nouns[noun_length - 1].length;
+            last_noun        = nouns[noun_length - 1],
+            last_noun_length = last_noun.length;
 
         if(fake !== false) noun = fake;
 
+        console.log(nouns[noun_length - 1].toLowerCase());
+
         var blending = "";
         if((Turkce.vowel.test(last_letter) || (/[çÇ]/.test(last_3_letter) && Turkce.vowelE.test(last_letter))) && !/[ğçĞÇ]/.test(last_letter) && !/^çü|^ÇÜ|^ÇÖ|^çö/.test(last_3_letter)) blending = "y";
-        if((Turkce.nounPhraseEnds.test(nouns[noun_length - 1]) && last_noun_length > 6)) blending = "n";
+        if(Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1)) blending = "n";
 
         var vovels = last_3_letter.match(Turkce.vowelG),
             suffix = "i";
@@ -211,13 +233,14 @@ var Turkce = {
             last_3_letter    = noun.substr(-3, 3),
             nouns            = noun.split(' '),
             noun_length      = nouns.length,
-            last_noun_length = nouns[noun_length - 1].length;
+            last_noun        = nouns[noun_length - 1],
+            last_noun_length = last_noun.length;
 
         if(fake !== false) noun = fake;
 
         var blending = "";
         if((Turkce.vowel.test(last_letter) || (/[çÇ]/.test(last_3_letter) && Turkce.vowelE.test(last_letter))) && !/[ğçĞÇ]/.test(last_letter) && !/^çü|^ÇÜ|^ÇÖ|^çö/.test(last_3_letter)) blending = "y";
-        if((Turkce.nounPhraseEnds.test(nouns[noun_length - 1]) && last_noun_length > 6)) blending = "n";
+        if((Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1))) blending = "n";
 
         var vovels = last_3_letter.match(Turkce.vowelG),
             suffix = "e";
@@ -259,12 +282,13 @@ var Turkce = {
             last_2_letter    = noun.substr(-2, 2),
             nouns            = noun.split(' '),
             noun_length      = nouns.length,
-            last_noun_length = nouns[noun_length - 1].length;
+            last_noun        = nouns[noun_length - 1],
+            last_noun_length = last_noun.length;
 
         if(fake !== false) noun = fake;
 
         var blending = "";
-        if((Turkce.nounPhraseEnds.test(nouns[noun_length - 1]) && last_noun_length > 6)) blending = "n";
+        if((Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1))) blending = "n";
 
         var suffix  = "d",
             suffix_ = "e";
@@ -313,12 +337,13 @@ var Turkce = {
             last_2_letter    = noun.substr(-2, 2),
             nouns            = noun.split(' '),
             noun_length      = nouns.length,
-            last_noun_length = nouns[noun_length - 1].length;
+            last_noun        = nouns[noun_length - 1],
+            last_noun_length = last_noun.length;
 
         if(fake !== false) noun = fake;
 
         var blending = "";
-        if((Turkce.nounPhraseEnds.test(nouns[noun_length - 1]) && last_noun_length > 6)) blending = "n";
+        if((Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1))) blending = "n";
 
         var suffix  = "d",
             suffix_ = "e";

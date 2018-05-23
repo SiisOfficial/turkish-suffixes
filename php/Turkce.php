@@ -10,7 +10,7 @@
  *
  * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
  *
- * Version: 1.4.2
+ * Version: 1.5
  */
 class Turkce {
     /*
@@ -28,9 +28,28 @@ class Turkce {
     |
     */
 
-    private static $nounPhraseEnds = '/(*UTF8)oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|odası$|leri$|ları$|lari$/i';
-    private static $vowel          = '/(*UTF8)[oueiöüaıOUEİÖÜAI]/';
-    private static $vowelE         = '/(*UTF8)[oueiöüaıOUEİÖÜAI]$/';
+    private static $nounPhraseEnds = '/(*UTF8)oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|leri$|ları$|lari$|üğü$/i';
+
+    //  This is a backup solution for noun phrases.
+    //  We'll directly look for the last word.
+    //  If $nouns count is more than one
+    //  and $last_noun (word) is in this array,
+    //  it's probably a noun phrase.
+    private static $nounPhraseWords = [
+        'okulu',
+        'odası',
+        'güzeli',
+        'paneli',
+        'suyu',
+        'denizi',
+        'gölü',
+        'yolu',
+        'lisesi',
+
+        'oğlu'  //  oğlu diye soyisim olur mu ki?
+    ];
+    private static $vowel           = '/(*UTF8)[oueiöüaıOUEİÖÜAI]/';
+    private static $vowelE          = '/(*UTF8)[oueiöüaıOUEİÖÜAI]$/';
 
     //  This is the simplest & fastest solution for now.
     //  I really don't want to check last noun of given $noun,
@@ -121,13 +140,13 @@ class Turkce {
     private static function checkHasPronounce($n) {
         $n = strtolower(str_replace(' ', '', $n));
 
-        if((substr($n, 0, 1) == "#" || substr($n, 0, 1) == "@") && ($pronounce = self::$pronounces[substr($n, 1)])) {
-            return $pronounce;
-        } else if($pronounce = self::$pronounces[$n]) {
-            return $pronounce;
+        if((substr($n, 0, 1) == "#" || substr($n, 0, 1) == "@")) {
+            $pronounce = isset(self::$pronounces[substr($n, 1)]) ? self::$pronounces[substr($n, 1)] : false;
+        } else {
+            $pronounce = isset(self::$pronounces[$n]) ? self::$pronounces[$n] : false;
         }
 
-        return false;
+        return $pronounce;
     }
 
     /**
@@ -158,7 +177,7 @@ class Turkce {
 
         $blending = "";
         if((preg_match(self::$vowel, $last_letter) || (preg_match('/(*UTF8)[çÇ]/', $last_3_letter) && preg_match(self::$vowelE, $last_letter))) && !preg_match('/(*UTF8)[ğçĞÇ]/', $last_letter) && !preg_match('/(*UTF8)^çü|^ÇÜ|^ÇÖ|^çö/', $last_3_letter)) $blending = "y";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6) $blending = "n";
+        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
 
         preg_match_all(self::$vowel, $last_3_letter, $vowels);
 
@@ -205,7 +224,7 @@ class Turkce {
 
         $blending = "";
         if((preg_match(self::$vowel, $last_letter) || (preg_match('/(*UTF8)[çÇ]/', $last_3_letter) && preg_match(self::$vowelE, $last_letter))) && !preg_match('/(*UTF8)[ğçĞÇ]/', $last_letter) && !preg_match('/(*UTF8)^çü|^ÇÜ|^ÇÖ|^çö/', $last_3_letter)) $blending = "y";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6) $blending = "n";
+        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
 
         preg_match_all(self::$vowel, $last_3_letter, $vowels);
 
@@ -250,7 +269,7 @@ class Turkce {
         if($fake !== false) $noun = $fake;
 
         $blending = "";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6) $blending = "n";
+        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
 
         $suffix  = "d";
         $suffix_ = "e";
@@ -303,7 +322,7 @@ class Turkce {
         if($fake !== false) $noun = $fake;
 
         $blending = "";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6) $blending = "n";
+        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
 
         $suffix  = "d";
         $suffix_ = "e";
@@ -543,7 +562,8 @@ class Turkce {
      * @return mixed
      */
     public static function processForNumber($callback = 'belirtmeHali', $noun) {
-        $last_number = end(preg_split('/\D/', $noun));
+        $last_number = preg_split('/\D/', $noun);
+        $last_number = $last_number[count($last_number) - 1];
 
         if($last_number == 0) {
             // it is directly zero
@@ -577,23 +597,27 @@ class Turkce {
 
         //  Check last number
         $last_1_letter = mb_substr($noun, -1, 1, 'utf-8');
-        $last_1_number = end(preg_split('/^\D/', $last_1_letter));
+        $last_1_number = preg_split('/^\D/', $last_1_letter);
+        $last_1_number = $last_1_number[count($last_1_number) - 1];
         if($last_1_number != "0") return call_user_func('self::' . $callback, $endings[intval($last_1_number)], $noun);
 
 
         //  Check last two numbers
         $last_2_letter = mb_substr($noun, -2, 2, 'utf-8');
-        $last_2_number = end(preg_split('/^\D/', $last_2_letter));
+        $last_2_number = preg_split('/^\D/', $last_2_letter);
+        $last_2_number = $last_2_number[count($last_2_number) - 1];
         if($last_2_number != "00") return call_user_func('self::' . $callback, $endings[intval($last_2_number)], $noun);
 
         //  Check last three numbers
         $last_3_letter = mb_substr($noun, -3, 3, 'utf-8');
-        $last_3_number = end(preg_split('/^\D/', $last_3_letter));
+        $last_3_number = preg_split('/^\D/', $last_3_letter);
+        $last_3_number = $last_3_number[count($last_3_number) - 1];
         if($last_3_number != "000") return call_user_func('self::' . $callback, "yüz", $noun);
 
         //  Check last four numbers
         $last_4_letter = mb_substr($noun, -4, 4, 'utf-8');
-        $last_4_number = end(preg_split('/^\D/', $last_4_letter));
+        $last_4_number = preg_split('/^\D/', $last_4_letter);
+        $last_4_number = $last_4_number[count($last_4_number) - 1];
         if($last_4_number != "0000" || $digit_length < 7) return call_user_func('self::' . $callback, "bin", $noun);
 
         //  Check for the rest

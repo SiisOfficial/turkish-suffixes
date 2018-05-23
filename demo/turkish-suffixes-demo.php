@@ -202,6 +202,7 @@ function makeBlock($noun) {
         echo "<b>Ayrılma (Ablative) :</b> " . Turkce::ayrilmaHali($noun) . "<br>";
         echo "<b>Sahiplik (Genitive) :</b> " . Turkce::sahiplikHali($noun) . "<br>";
         echo "<b>Vasıta (Comitative) :</b> " . Turkce::vasitaHali($noun) . "<br>";
+        echo "<b>Dahi Bağlacı (Conjunction) :</b> " . Turkce::dahiBaglac($noun) . "<br>";
         echo "<b>Sıra Sayı (Ordinal Number) :</b> " . Turkce::siraSayi($noun) . "<br>";
         echo "<b>Üleştirme (Distributive) :</b> " . Turkce::ulestirme($noun) . "<br>";
         echo "</blockquote>";

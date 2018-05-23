@@ -8,7 +8,7 @@
  *
  * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
  *
- * Version: 1.4.2
+ * Version: 1.5
  */
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,26 @@ class Turkce {
     |
     */
 
-    static string nounPhraseEnds = "(?i)oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|odası$|leri$|ları$|lari$";
+    static string nounPhraseEnds = "(?i)oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|leri$|ları$|lari$|üğü$";
+    
+    //  This is a backup solution for noun phrases.
+    //  We'll directly look for the last word.
+    //  If string[] nouns count is more than one
+    //  and string last_noun (word) is in this array,
+    //  it's probably a noun phrase.
+    static string[] nounPhraseWords = new string[] {
+        'okulu',
+        'odası',
+        'güzeli',
+        'paneli',
+        'suyu',
+        'denizi',
+        'gölü',
+        'yolu',
+        'lisesi',
+        'oğlu'
+    };
+    
     static string vowel = "[oueiöüaıOUEİÖÜAI]";
     static string vowelE = "[oueiöüaıOUEİÖÜAI]$";
 
@@ -214,7 +233,7 @@ class Turkce {
 
         string blending = "";
         if((Regex.IsMatch(last_letter, vowel) || (Regex.IsMatch(last_3_letter, "[çÇ]") && Regex.IsMatch(last_letter, vowelE))) && !Regex.IsMatch(last_letter, "[ğçĞÇ]") && !Regex.IsMatch(last_3_letter, "^çü|^ÇÜ|^ÇÖ|^çö")) blending = "y";
-        if(Regex.IsMatch(last_noun, nounPhraseEnds) && last_noun_length > 6) blending = "n";
+        if(Regex.IsMatch(last_noun, nounPhraseEnds) && last_noun_length > 6 || ()) blending = "n";
 
         var vowels = Regex.Matches(last_3_letter, vowel);
         string suffix = "i";
