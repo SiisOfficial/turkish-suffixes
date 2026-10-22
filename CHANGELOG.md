@@ -1,3 +1,26 @@
+## 1.6.0 (2026-10-22)
+Features:
+
+- Added thin vowel exceptions support (e.g., Saat'e, Rol'e, Gol'ü, Alkol'e, Kalp'e, Petrol'e, Terminal'e, Sembol'e, Kontrol'e).
+- Added automatic pronunciation fallback for all-consonant acronyms and initialisms (e.g., TDK'ye, TRT'ye, TBMM'ye, KDV'ye).
+- Added single letter and alphanumeric block/class support (e.g., 1B'ye, Apt 3D'ye, Kan Grubu A'ya).
+- Added short aliases across all three languages: yi(), ye(), de(), den(), nin(), ile(), dahi(), nci(), er().
+- Added extension method support for C# ("Ahmet".BelirtmeHali(), "Ankara".Ye(), 2.Er()).
+- Added Unity 6 and modern .NET support, including Unity Localization Formatter (csharp/TurkceFormatter.cs).
+- Added smart trailing quote detection: strings already ending with quotes (" or ') no longer receive redundant apostrophes (e.g., "Matrix"e).
+
+Bugfixes:
+
+- Fixed Issue #1: Compound noun phrase suffixes now correctly use the buffer letter n instead of y for possessive compound endings (e.g., Soyunma Odası'na, Ayma Kısmı'na, Yoğun Bakım Ünitesi'ne).
+- Fixed distributive alias calling siraSayi instead of ulestirme in PHP and JS.
+- Fixed KeyNotFoundException in C# ProcessForNumber when processing numbers ending in double or triple zeros (100, 2500, etc.).
+- Fixed FilterAndTrim regex accidentally removing currency symbols.
+- Fixed string literal regex split bug in JavaScript processForNumber.
+
+Performance:
+- Modernized C# class for zero-allocation character checks, compiled regexes, and HashSet lookups friendly to Unity GC.
+- Optimized PHP UTF-8 multi-byte traversal for PHP 8.x compatibility.
+
 ## 1.4.1 (2016-10-07)
 Features:
 

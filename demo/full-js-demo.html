@@ -2,152 +2,185 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="title">Turkish Suffixes Demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600|Quicksand:400" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
-            background: white;
+            background: #fafafa;
             font-size: 15px;
             color: #333;
             font-family: 'Open Sans', sans-serif;
+            min-height: 100vh;
         }
 
         header {
             background: #01ADD0;
-            height: 3rem;
-            padding: 1rem 1rem 1rem 1.5rem;
+            min-height: 3.5rem;
+            padding: 1rem 1.5rem;
             color: white;
             font-size: 1.5rem;
-            line-height: 3rem;
+            line-height: 1.5rem;
             font-family: 'Quicksand', sans-serif;
-            box-shadow: 0 .1rem .75rem rgba(0, 0, 0, .5);
+            box-shadow: 0 .1rem .75rem rgba(0, 0, 0, .3);
             position: relative;
-            z-index: 1;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         h1 {
-            font-size: inherit;
+            font-size: 1.5rem;
             padding: 0;
             margin: 0;
-            font-weight: inherit;
-            display: inline;
+            font-weight: 600;
+            display: inline-block;
         }
 
         small {
-            margin-left: .25rem;
-            font-size: 1rem;
+            margin-left: .5rem;
+            font-size: .95rem;
+            opacity: .85;
+            font-weight: normal;
         }
 
         form {
             background: #424242;
             color: white;
-            padding: 2rem 1rem 0 1rem;
-            position: relative;
-            z-index: 0;
+            padding: 1.5rem;
             box-shadow: 0 0 .33rem rgba(0, 0, 0, .33);
-            overflow: hidden;
         }
 
-        div {
-            display: block;
-            overflow: hidden;
+        .inputs-row {
+            display: flex;
+            gap: .75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
 
-        div + div {
-            padding-top: .5rem;
-            padding-bottom: 2rem;
-            width: 56.5rem;
+        .actions-row {
+            display: flex;
+            gap: .75rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         input {
-            height: 1.33rem;
-            line-height: 1.33rem;
+            height: 2.6rem;
             background: white;
-            border: none;
-            padding: .5rem;
+            color: #222;
+            border: 1px solid #ccc;
+            border-radius: .25rem;
+            padding: .5rem .75rem;
             font-size: 1rem;
-            float: left;
             font-family: 'Open Sans', sans-serif;
-            width: 20rem;
+            flex: 1 1 14rem;
+            min-width: 0;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #01ADD0;
+            border-color: #01ADD0;
         }
 
         #noun {
-            width: 12rem;
-        }
-
-        input + input {
-            margin-left: .5rem;
+            flex: 1 1 12rem;
+            font-weight: 600;
+            color: #01ADD0;
+            border: 2px solid #01ADD0;
         }
 
         select {
-            height: 2.33rem;
-            line-height: 1.33rem;
+            height: 2.6rem;
             background: white;
-            border: none;
-            padding: 1rem;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: .25rem;
+            padding: 0 .75rem;
             font-size: 1rem;
-            float: left;
-            border-radius: 0;
-            width: 13rem;
-            margin-left: 21.5rem;
+            font-family: 'Open Sans', sans-serif;
+            flex: 0 1 16rem;
+            cursor: pointer;
         }
 
         button {
             font-size: 1rem;
-            height: 2.33rem;
+            height: 2.6rem;
             padding: 0 1.5rem;
-            line-height: 1.33rem;
             background: #01ADD0;
-            border-radius: .2rem;
+            border-radius: .25rem;
             text-align: center;
             color: white;
             border: none;
-            float: right;
             font-family: 'Open Sans', sans-serif;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 .1rem .33rem rgba(0, 0, 0, .8);
-            transition: .33s ease-out;
-            margin-right: .5rem;
+            box-shadow: 0 .1rem .33rem rgba(0, 0, 0, .4);
+            transition: .2s ease-out;
         }
 
         button:hover {
-            box-shadow: 0 .2rem .75rem rgba(0, 0, 0, .67);
+            background: #0099b8;
+            box-shadow: 0 .2rem .5rem rgba(0, 0, 0, .5);
         }
 
-        section {
-            padding: 1.5rem;
-            font-size: 1.5rem;
+        section#output {
+            padding: 2rem 1.5rem 1rem;
+            font-size: 1.6rem;
+            color: #222;
+            line-height: 1.4;
+        }
+
+        section#output b {
+            color: #01ADD0;
+            border-bottom: 2px dashed #01ADD0;
+            padding-bottom: 2px;
         }
 
         code {
             display: block;
-            padding: 1.5rem;
-            font-size: 1rem;
-            background: gainsboro;
-            color: #636363;
-            margin-bottom: 3.33rem;
+            margin: 1rem 1.5rem 5rem;
+            padding: 1.25rem 1.5rem;
+            font-size: .95rem;
+            background: #eee;
+            border: 1px solid #ddd;
+            border-radius: .35rem;
+            color: #444;
+            line-height: 1.6;
         }
 
         code h3 {
-            margin-top: 0;
+            margin: 0 0 .4rem 0;
+            font-size: .85rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: #777;
         }
 
-        code span + h3 {
+        code h3:not(:first-child) {
             margin-top: 1rem;
         }
 
         code .class {
-            color: #787878 !important;
+            color: #017c95 !important;
+            font-weight: 600;
         }
 
         code .function {
-            color: darkorange !important;
+            color: #d35400 !important;
+            font-weight: 600;
         }
 
         code .string {
-            color: darkgreen !important;
+            color: #27ae60 !important;
         }
 
         footer {
@@ -155,45 +188,70 @@
             bottom: 0;
             right: 0;
             left: 0;
-            height: 1.33rem;
+            height: 3rem;
             font-size: .9rem;
-            padding: 1rem 1rem 1rem 1.5rem;
+            padding: 0 1.5rem;
             background: white;
-            border-top: 1px solid #efefef;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 20;
         }
 
         .lang-change-group {
-            float: left;
+            display: inline-block;
         }
 
-        a:link {
-            color: #333;
+        .lang-change-group a {
+            color: #01ADD0;
+            text-decoration: none;
+            font-weight: 600;
+            padding: .2rem .4rem;
         }
 
-        a.disabled {
+        .lang-change-group a.disabled {
             color: #999;
             cursor: default;
-            text-decoration: none !important;
+            text-decoration: none;
         }
 
-        a:nth-last-of-type(1) {
-            margin-right: 2.5rem;
+        #StressTest {
+            display: flex;
+            gap: .75rem;
+            align-items: center;
+        }
+
+        #StressTest > a {
+            color: white;
+            text-decoration: none;
+            font-size: .9rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, .2);
+            padding: .4rem .8rem;
+            border-radius: .25rem;
+            transition: .2s ease;
         }
     </style>
 </head>
 <body>
 <header>
-    <h1 data-i18n="title">Turkish Suffixes Demo</h1>
-    <small data-i18n="siis">by Siis</small>
+    <div>
+        <h1 data-i18n="title">Turkish Suffixes Demo</h1>
+        <small data-i18n="siis">by Siis</small>
+    </div>
+    <div id="StressTest">
+        <a href="turkish-suffixes-demo.html" target="_blank">Stress Test</a>
+    </div>
 </header>
 <form>
-    <div>
+    <div class="inputs-row">
         <input type="text" data-i18n="first" id="first" name="first" value="Bu" placeholder="First part">
         <input type="text" data-i18n="noun" id="noun" name="noun" value="Demo" placeholder="Noun/Number">
         <input type="text" data-i18n="last" id="last" name="last" value="hoşgeldiniz" placeholder="Last part">
     </div>
-    <div>
-        <select name="type">
+    <div class="actions-row">
+        <select name="type" id="type">
             <option data-i18n="accusative" value="accusativeCase">Accusative Case</option>
             <option data-i18n="dative" value="dativeCase" selected>Dative Case</option>
             <option data-i18n="locative" value="locativeCase">Locative Case</option>
@@ -215,15 +273,14 @@
 </code>
 <footer>
     <span class="lang-change-group">
-        <a href="#" class="change-lang disabled" data-lang="en">English</a> / <a href="#" class="change-lang" data-lang="tr">Türkçe</a>
+        <a href="#" class="change-lang" data-lang="en">English</a> / <a href="#" class="change-lang disabled" data-lang="tr">Türkçe</a>
     </span>
-    <a class="github-button" href="https://github.com/SiisOfficial/turkish-suffixes" aria-label="View on GitHub">View on GitHub</a>
+    <a class="github-button" href="https://github.com/SiisOfficial/turkish-suffixes" data-icon="octicon-star" data-show-count="true" aria-label="Star SiisOfficial/turkish-suffixes on GitHub">View on GitHub</a>
 </footer>
 
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600|Quicksand:400" rel="stylesheet">
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="../js/Turkce.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     var i18n = {
         en: {
@@ -281,66 +338,61 @@
             change: "Güncelle"
         }
     };
+
     var generateCode = {
-        h3: function(lang) {
+        h3: function (lang) {
             return '<h3>' + lang + '</h3>';
         },
-        class: function() {
+        class: function () {
             return '<span class="class">Turkce</span>';
         },
-        function: function(func, string) {
+        function: function (func, string) {
             return '<span class="function">' + func + '(</span>' + this.string(string) + '<span class="function">)</span>';
         },
-        string: function(string) {
+        string: function (string) {
             return '<span class="string">"' + string + '"</span>';
         },
-        php: function(func, string) {
+        php: function (func, string) {
             return this.h3("PHP") + this.class() + '::' + this.function(func, string) + ';';
         },
-        js: function(func, string) {
+        js: function (func, string) {
             return this.h3("JavaScript") + this.class() + '.' + this.function(func, string) + ';';
         },
-        cs: function(func, string) {
+        cs: function (func, string) {
             return this.h3("C#") + this.class() + '.' + this.function(func, string) + ';';
         }
     };
 
-    /**
-     * I'm too lazy to make a url parser function,
-     * so I had used this: http://stackoverflow.com/a/5158301
-     *
-     * @param name
-     * @returns {Array|{index: number, input: string}|string}
-     */
     function getParameterByName(name) {
         var match = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
         return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
     }
 
-    $(document).ready(function() {
-        var output     = $('#output'),
-            first      = $('#first'),
-            noun       = $('#noun'),
-            last       = $('#last'),
-            type       = $('select'),
-            form       = $('form'),
-            dI18ns     = $('[data-i18n]'),
+    $(document).ready(function () {
+        var output = $('#output'),
+            first = $('#first'),
+            noun = $('#noun'),
+            last = $('#last'),
+            type = $('select'),
+            form = $('form'),
+            dI18ns = $('[data-i18n]'),
             langChange = $('.change-lang'),
-            code       = $('code'),
-            activelang = "en";
+            code = $('code'),
+            activelang = "tr";
 
         function Localize(lang) {
-            dI18ns.each(function() {
+            dI18ns.each(function () {
                 var t = $(this);
+                var key = t.data('i18n');
+                if (!i18n[lang] || !i18n[lang][key]) return;
 
-                if(t.tagName == "input") {
-                    t.attr('placeholder', i18n[lang][t.data('i18n')]);
+                if (t.is('input')) {
+                    t.attr('placeholder', i18n[lang][key]);
                 } else {
-                    t.html(i18n[lang][t.data('i18n')]);
+                    t.html(i18n[lang][key]);
                 }
             });
             activelang = lang;
-
             renderOutput(getNoun());
         }
 
@@ -350,56 +402,69 @@
                 l = getParameterByName("last"),
                 t = getParameterByName("type");
 
-            if(f != null) first.val(f);
-            if(n != null) noun.val(n);
-            if(l != null) last.val(l);
-            if(t != null && type.find('[value=' + t + ']').length) type.val(t);
-
+            if (f != null) first.val(f);
+            if (n != null) noun.val(n);
+            if (l != null) last.val(l);
+            if (t != null && type.find('[value=' + t + ']').length) type.val(t);
         }
 
         function renderOutput(n) {
+            var rawNoun = noun.val();
             output.html(
-                    first.val() + ' <b>'
-                    + n + '</b> '
-                    + last.val()
+                escapeHtml(first.val()) + ' <b>'
+                + escapeHtml(n) + '</b> '
+                + escapeHtml(last.val())
             );
+
+            var fnName = i18n[activelang][type.val() + '_'] || type.val();
             code.html(
-                    generateCode.php(i18n[activelang][type.val() + '_'], noun.val()) +
-                    generateCode.js(i18n[activelang][type.val() + '_'], noun.val()) +
-                    generateCode.cs(i18n[activelang][type.val() + '_'], noun.val())
+                generateCode.php(fnName, rawNoun) +
+                generateCode.js(fnName, rawNoun) +
+                generateCode.cs(fnName, rawNoun)
             );
+        }
+
+        function escapeHtml(str) {
+            return (str || '').replace(/[&<>"']/g, function (m) {
+                return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m];
+            });
         }
 
         function getNoun() {
-            return Turkce[type.val()](noun.val());
+            var val = noun.val();
+            var fn = type.val();
+            if (typeof Turkce !== 'undefined' && typeof Turkce[fn] === 'function') {
+                return Turkce[fn](val);
+            }
+            return val;
         }
 
-        form.on('submit', function(e) {
+        form.on('submit', function (e) {
             e.preventDefault();
             history.pushState(null, "", "?" + form.serialize());
-
             renderOutput(getNoun());
         });
 
-        $('input, select').on('change', function() {
-            form.submit();
+        $('input, select').on('input change', function () {
+            renderOutput(getNoun());
         });
 
-        langChange.on('click', function(e) {
+        langChange.on('click', function (e) {
             e.preventDefault();
-            var t    = $(this),
-                lang = t.data('lang');
+            var t = $(this);
+            var lang = t.data('lang');
 
-            if(t.hasClass('disabled')) return;
+            if (t.hasClass('disabled')) return;
 
+            langChange.removeClass('disabled');
+            t.addClass('disabled');
             Localize(lang);
-            langChange.toggleClass('disabled');
         });
 
         fillFromUrl();
-        renderOutput(getNoun());
+        Localize(activelang);
 
-        $(window).on('popstate', function() {
+        $(window).on('popstate', function () {
             fillFromUrl();
             renderOutput(getNoun());
         });

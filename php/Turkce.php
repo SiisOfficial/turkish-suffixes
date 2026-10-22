@@ -1,643 +1,846 @@
 <?php
 
 /**
- * Created by IntelliJ IDEA.
  * Author: A. Utku Sipahioğlu (http://teorikdeli.com)
- * Company: Siis (http://siis.com.tr | http://siisgames.com)
+ * Company: Siis (https://siis.com.tr | https://siisgames.com) & Blay Games (https://blaygames.com)
  *
  * License: MIT
  * https://github.com/SiisOfficial/turkish-suffixes
  *
- * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
+ * Demo & detailed usage: https://siis.com.tr/turkish-suffixes
  *
- * Version: 1.5
+ * Version: 1.6
  */
-class Turkce {
-    /*
-    |--------------------------------------------------------------------------
-    | Turkish Case Suffixes Class For PHP
-    |--------------------------------------------------------------------------
-    |
-    |   Should work with PHP >=5.
-    |   Not tested with PHP 7.
-    |
-    |   --------
-    |
-    |   PHP 5 ve sonrasında çalışıyor olmalı.
-    |   PHP 7 ile test edilmedi.
-    |
-    */
-
-    private static $nounPhraseEnds = '/(*UTF8)oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|leri$|ları$|lari$|üğü$/i';
-
-    //  This is a backup solution for noun phrases.
-    //  We'll directly look for the last word.
-    //  If $nouns count is more than one
-    //  and $last_noun (word) is in this array,
-    //  it's probably a noun phrase.
-    private static $nounPhraseWords = [
-        'okulu',
-        'odası',
-        'güzeli',
-        'paneli',
-        'suyu',
-        'denizi',
-        'gölü',
-        'yolu',
-        'lisesi',
-
-        'oğlu'  //  oğlu diye soyisim olur mu ki?
-    ];
-    private static $vowel           = '/(*UTF8)[oueiöüaıOUEİÖÜAI]/';
-    private static $vowelE          = '/(*UTF8)[oueiöüaıOUEİÖÜAI]$/';
-
-    //  This is the simplest & fastest solution for now.
-    //  I really don't want to check last noun of given $noun,
-    //  bacause (for example vive) last noun can be a Turkish brand or something.
-    //  I'd suggest you to use $fake (like Turkce::accusativeCase("yıv", "view");).
-    //
-    //  Only for some brands, people, products, etc.
-    private static $pronounces = [
-        'apple' => 'pıl',
-        'google' => 'gıl',
-        'twitter' => 'tır',
-        'youtube' => 'tup',
-        'chrome' => 'rom',
-        'developer' => 'pır',
-        'appledeveloper' => 'pır',
-        'googledeveloper' => 'pır',
-        'facebookdeveloper' => 'pır',
-        'googlecardboard' => 'ord',
-        'cardboard' => 'ord',
-        'iphone' => 'fon',
-        'ipad' => 'ped',
-        'watch' => 'voç',
-        'appleiphone' => 'fon',
-        'appleipad' => 'ped',
-        'applewatch' => 'voç',
-        'imessage' => 'sıc',
-        'php' => 'çpi',
-        'steam' => 'tim',
-        'valve' => 'alv',
-        'facebookmessenger' => 'cır',
-        'messenger' => 'cır',
-        'snapchat' => 'çet',
-        'chat' => 'çet',
-        'skype' => 'ayp',
-        'unity' => 'iti',
-        'spotify' => 'fay',
-        'htc' => 'ysi',
-        'half-life' => 'ayf',
-        'halflife' => 'ayf',
-        'htcvive' => 'avy',
-        '9gag' => 'geg',
-        'tv' => 'ivi',
-        'appletv' => 'ivi',
-        'usa' => 'sey',
-        'googlemaps' => 'eps',
-        'maps' => 'eps',
-        'cern' => 'örn',
-        'adobe' => 'dob',
-        'imdb' => 'ibi',
-        'italy' => 'ali',
-        'store' => 'tor',
-        'appstore' => 'tor',
-        'playstore' => 'tor',
-        'elonmusk' => 'ask',
-        'einstein' => 'ayn',
-        'xcode' => 'kod',
-        'github' => 'hab',
-        'bitbucket' => 'kıt',
-        'slipknot' => 'nat',
-        'ironmaiden' => 'dın',
-        'slayer' => 'yır',
-        'gameofthrones' => 'ons',
-        'thesimpsons' => 'ıns',
-        'familyguy' => 'gay',
-        'starwars' => 'ors',
-        'darthvader' => 'dır',
-        'beethoven' => 'vın',
-        'vr' => 'yar',
-        'playstationvr' => 'yar',
-        'gearvr' => 'yar',
-        'googlevr' => 'yar',
-        'steamvr' => 'yar',
-        'osvr' => 'yar',
-        'vrfirst' => 'öst',
-        'unrealengine' => 'cin',
-        'cryengine' => 'cin',
-        '$' => 'lar',
-        '€' => 'uro',
-        '₺' => 'ele',
-    ];
-
-    /**
-     * Checks the noun if it has a pronounce in $pronounces
-     *
-     * @param $n
-     * @return bool || string
-     */
-    private static function checkHasPronounce($n) {
-        $n = strtolower(str_replace(' ', '', $n));
-
-        if((substr($n, 0, 1) == "#" || substr($n, 0, 1) == "@")) {
-            $pronounce = isset(self::$pronounces[substr($n, 1)]) ? self::$pronounces[substr($n, 1)] : false;
-        } else {
-            $pronounce = isset(self::$pronounces[$n]) ? self::$pronounces[$n] : false;
-        }
-
-        return $pronounce;
-    }
-
-    /**
-     * Accusative case
-     *
-     * @param string $noun
-     * @param bool $fake (integer/string if it's a fake noun): this is for pronounce usage
-     * @return string
-     */
-    public static function belirtmeHali($noun, $fake = false) {
-        $noun = trim($noun);
-
-        if(!$fake && ($fake_ = self::checkHasPronounce($noun))) {
-            $fake = $noun;
-            $noun = $fake_;
-        }
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
-
-        $last_letter      = mb_substr($noun, -1, 1, 'utf-8');
-        $last_3_letter    = mb_substr($noun, -3, 3, 'utf-8');
-        $nouns            = preg_split('/ /', $noun);
-        $last_noun        = $nouns[count($nouns) - 1];
-        $last_noun_length = mb_strlen($last_noun, 'utf-8');
-
-        if($fake !== false) $noun = $fake;
-
-        $blending = "";
-        if((preg_match(self::$vowel, $last_letter) || (preg_match('/(*UTF8)[çÇ]/', $last_3_letter) && preg_match(self::$vowelE, $last_letter))) && !preg_match('/(*UTF8)[ğçĞÇ]/', $last_letter) && !preg_match('/(*UTF8)^çü|^ÇÜ|^ÇÖ|^çö/', $last_3_letter)) $blending = "y";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
-
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-
-        $suffix = "i";
-        if(count($vowels[0]) == 0) return ($noun . "'" . $blending . $suffix);
-
-        if(preg_match('/(*UTF8)[öüÖÜ]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "ü";
-        if(preg_match('/(*UTF8)[aıAI]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "ı";
-        if(preg_match('/(*UTF8)[ouOU]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "u";
-
-        return ($noun . "'" . $blending . $suffix);
-    }
-
-    public static function accusativeCase($noun, $fake = false) {
-        return self::belirtmeHali($noun, $fake);
-    }
-
-    /**
-     * Dative case
-     *
-     * @param string $noun
-     * @param bool $fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @return string
-     */
-    public static function yonelmeHali($noun, $fake = false) {
-        $noun = trim($noun);
-
-        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
-            $fake = $noun;
-            $noun = $fake_;
-        }
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
-
-        $last_letter      = mb_substr($noun, -1, 1, 'utf-8');
-        $last_3_letter    = mb_substr($noun, -3, 3, 'utf-8');
-        $nouns            = preg_split('/ /', $noun);
-        $last_noun        = $nouns[count($nouns) - 1];
-        $last_noun_length = mb_strlen($last_noun, 'utf-8');
-
-        if($fake !== false) $noun = $fake;
-
-        $blending = "";
-        if((preg_match(self::$vowel, $last_letter) || (preg_match('/(*UTF8)[çÇ]/', $last_3_letter) && preg_match(self::$vowelE, $last_letter))) && !preg_match('/(*UTF8)[ğçĞÇ]/', $last_letter) && !preg_match('/(*UTF8)^çü|^ÇÜ|^ÇÖ|^çö/', $last_3_letter)) $blending = "y";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
-
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-
-        $suffix = "e";
-        if(count($vowels[0]) == 0) return ($noun . "'" . $blending . $suffix);
-
-        if(preg_match('/(*UTF8)[ouaıOUAI]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "a";
-
-        return ($noun . "'" . $blending . $suffix);
-    }
-
-    public static function dativeCase($noun, $fake = false) {
-        return self::yonelmeHali($noun, $fake);
-    }
-
-    /**
-     * Locative case
-     *
-     * @param string $noun
-     * @param bool $fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @return string
-     */
-    public static function bulunmaHali($noun, $fake = false) {
-        $noun = trim($noun);
-
-        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
-            $fake = $noun;
-            $noun = $fake_;
-        }
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
-
-        $last_letter      = mb_substr($noun, -1, 1, 'utf-8');
-        $last_3_letter    = mb_substr($noun, -3, 3, 'utf-8');
-        $last_2_letter    = mb_substr($noun, -2, 2, 'utf-8');
-        $nouns            = preg_split('/ /', $noun);
-        $last_noun        = $nouns[count($nouns) - 1];
-        $last_noun_length = mb_strlen($last_noun, 'utf-8');
-
-        if($fake !== false) $noun = $fake;
-
-        $blending = "";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
-
-        $suffix  = "d";
-        $suffix_ = "e";
-        if(preg_match('/(*UTF8)[pçktfşhPÇKTFŞH]/', $last_2_letter)) $suffix = "t";
-        if(preg_match('/(*UTF8)[ğĞ]/', $last_letter)) $suffix = "d";
-        if(preg_match('/(*UTF8)ş|s|ç/i', $last_2_letter)) $suffix = "t";
-        if(preg_match(self::$vowel, $last_letter)) $suffix = "d";
-        if(preg_match('/(*UTF8)şk|ŞK/', $last_3_letter)) $suffix_ = "a";
-
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-
-        if(count($vowels[0]) == 0) return ($noun . "'" . $blending . $suffix . $suffix_);
-
-        if(preg_match('/(*UTF8)[ouaıOUAI]/', $vowels[0][count($vowels[0]) - 1])) $suffix_ = "a";
-        if(preg_match('/(*UTF8)[öüeiÖÜEİ]/', $vowels[0][count($vowels[0]) - 1])) $suffix_ = "e";
-
-        return ($noun . "'" . $blending . $suffix . $suffix_);
-    }
-
-    public static function locativeCase($noun, $fake = false) {
-        return self::bulunmaHali($noun, $fake);
-    }
-
-    /**
-     * Ablative case
-     *
-     * @param string $noun
-     * @param bool $fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @return string
-     */
-    public static function ayrilmaHali($noun, $fake = false) {
-        $noun = trim($noun);
-
-        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
-            $fake = $noun;
-            $noun = $fake_;
-        }
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
-
-        $last_letter      = mb_substr($noun, -1, 1, 'utf-8');
-        $last_3_letter    = mb_substr($noun, -3, 3, 'utf-8');
-        $last_2_letter    = mb_substr($noun, -2, 2, 'utf-8');
-        $nouns            = preg_split('/ /', $noun);
-        $last_noun        = $nouns[count($nouns) - 1];
-        $last_noun_length = mb_strlen($last_noun, 'utf-8');
-
-        if($fake !== false) $noun = $fake;
-
-        $blending = "";
-        if(preg_match(self::$nounPhraseEnds, $last_noun) && $last_noun_length > 6 || (in_array(mb_strtolower($last_noun), self::$nounPhraseWords) && count($nouns) > 1)) $blending = "n";
-
-        $suffix  = "d";
-        $suffix_ = "e";
-        if(preg_match('/(*UTF8)[pçktfşhPÇKTFŞH]/', $last_2_letter)) $suffix = "t";
-        if(preg_match('/(*UTF8)[ğĞ]/', $last_letter)) $suffix = "d";
-        if(preg_match('/(*UTF8)ş|s|ç/i', $last_2_letter)) $suffix = "t";
-        if(preg_match(self::$vowel, $last_letter)) $suffix = "d";
-        if(preg_match('/(*UTF8)şk|ŞK/', $last_3_letter)) $suffix_ = "a";
-
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-
-        if(count($vowels[0]) == 0) return ($noun . "'" . $blending . $suffix . $suffix_ . "n");
-
-        if(preg_match('/(*UTF8)[ouaıOUAI]/', $vowels[0][count($vowels[0]) - 1])) $suffix_ = "a";
-        if(preg_match('/(*UTF8)[öüeiÖÜEİ]/', $vowels[0][count($vowels[0]) - 1])) $suffix_ = "e";
-
-        return ($noun . "'" . $blending . $suffix . $suffix_ . "n");
-    }
-
-    public static function ablativeCase($noun, $fake = false) {
-        return self::ayrilmaHali($noun, $fake);
-    }
-
-    /**
-     * Genitive case
-     *
-     * @param string $noun
-     * @param bool $fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @return string
-     */
-    public static function sahiplikHali($noun, $fake = false) {
-        $noun = trim($noun);
-
-        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
-            $fake = $noun;
-            $noun = $fake_;
-        }
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
-
-        $last_letter   = mb_substr($noun, -1, 1, 'utf-8');
-        $last_3_letter = mb_substr($noun, -3, 3, 'utf-8');
-
-        if($fake !== false) $noun = $fake;
-
-        $blending = "";
-        if(preg_match(self::$vowel, $last_letter)) $blending = "n";
-
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-
-        $suffix = "i";
-        if(count($vowels[0]) == 0) return ($noun . "'" . $blending . $suffix . "n");
-
-        if(preg_match('/(*UTF8)[öüÖÜ]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "ü";
-        if(preg_match('/(*UTF8)[aıAI]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "ı";
-        if(preg_match('/(*UTF8)[ouOU]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "u";
-
-        return ($noun . "'" . $blending . $suffix . "n");
-    }
-
-    public static function genitiveCase($noun, $fake = false) {
-        return self::sahiplikHali($noun, $fake);
-    }
-
-    /**
-     * Comitative case
-     *
-     * @param string $noun
-     * @param bool $fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @return string
-     */
-    public static function vasitaHali($noun, $fake = false) {
-        $noun = trim($noun);
-
-        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
-            $fake = $noun;
-            $noun = $fake_;
-        }
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
-
-        $last_letter   = mb_substr($noun, -1, 1, 'utf-8');
-        $last_3_letter = mb_substr($noun, -3, 3, 'utf-8');
-
-        if($fake !== false) $noun = $fake;
-
-        $blending = "";
-        if(preg_match(self::$vowel, $last_letter)) $blending = "y";
-
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-
-        $suffix = "e";
-        if(count($vowels[0]) == 0) return ($noun . "'" . $blending . "l" . $suffix);
-
-        if(preg_match('/(*UTF8)[ouaıOUAI]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "a";
-
-        return ($noun . "'" . $blending . "l" . $suffix);
-    }
-
-    public static function comitativeCase($noun, $fake = false) {
-        return self::vasitaHali($noun, $fake);
-    }
-
-    /**
-     * Conjunction  (I'm not sure if this is the correct meaning of this)
-     *
-     * @param string $noun
-     * @param bool $fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @return string
-     */
-    public static function dahiBaglac($noun, $fake = false) {
-        $noun = trim($noun);
-
-        if(!$fake && $fake_ = self::checkHasPronounce($noun)) {
-            $fake = $noun;
-            $noun = $fake_;
-        }
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $noun)) return self::processForNumber(__FUNCTION__, $noun);
-
-        $last_3_letter = mb_substr($noun, -3, 3, 'utf-8');
-
-        if($fake !== false) $noun = $fake;
-
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-
-        $blending = "d";
-        $suffix   = "e";
-        if(count($vowels[0]) == 0) return ($noun . " " . $blending . $suffix);
-
-        if(preg_match('/(*UTF8)[aıAIouOU]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "a";
-
-        return ($noun . " " . $blending . $suffix);
-    }
-
-    public static function conjunction($noun, $fake = false) {
-        return self::dahiBaglac($noun, $fake);
-    }
-
-    /**
-     * Ordinal Number
-     *
-     * @param string $number
-     * @param bool $integer (if it's a integer, use "'", otherwise don't.)
-     *
-     * !Warning: Don't give $integer when you directly call this method, because it'll override the $number with your $integer.
-     *           This is mostly for internal use (see processForNumber())
-     *
-     * @return string
-     */
-    public static function siraSayi($number, $integer = false) {
-        $number = trim($number);
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $number)) return self::processForNumber(__FUNCTION__, $number);
-
-        $last_letter   = mb_substr($number, -1, 1, 'utf-8');
-        $last_3_letter = mb_substr($number, -3, 3, 'utf-8');
-
-        //  Check if the ending with "ört", if so make it "örd" (only for "dört")
-        if(mb_strtolower($last_3_letter, 'utf-8') == "ört") $number = mb_substr($number, 0, mb_strlen($number) - 1, 'utf-8') . ($last_letter == "t" ? "d" : "D");
-
-        if($integer !== false) $number = $integer;
-
-        $blending = "i";
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-        $suffix = "i";
-
-        if(count($vowels[0]) == 0) return ($number . ($integer ? "'" : "") . $blending . "nc" . $suffix);
-
-        if(preg_match('/(*UTF8)[öüÖÜ]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "ü";
-        if(preg_match('/(*UTF8)[aıAI]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "ı";
-        if(preg_match('/(*UTF8)[ouOU]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "u";
-
-        if(!preg_match(self::$vowel, $last_letter)) $blending = $suffix; else $blending = "";
-
-        return ($number . ($integer ? "'" : "") . $blending . "nc" . $suffix);
-    }
-
-    public static function ordinalNumber($number, $integer = false) {
-        return self::siraSayi($number, $integer);
-    }
-
-    /**
-     * Distributive
-     *
-     * @param string $number
-     * @param bool $integer (if it's a integer, use "'", otherwise don't.)
-     *
-     * !Warning: Don't give $integer when you directly call this method, because it'll override the $number with your $integer.
-     *           This is mostly for internal use (see processForNumber())
-     *
-     * @return string
-     */
-    public static function ulestirme($number, $integer = false) {
-        $number = trim($number);
-
-        //  Check the ending if it's a number
-        if(preg_match('/\d$/', $number)) return self::processForNumber(__FUNCTION__, $number);
-
-        $last_letter   = mb_substr($number, -1, 1, 'utf-8');
-        $last_3_letter = mb_substr($number, -3, 3, 'utf-8');
-
-        //  Check if the ending with "ört", if so make it "örd" (only for "dört")
-        if(mb_strtolower($last_3_letter, 'utf-8') == "ört") $number = mb_substr($number, 0, mb_strlen($number) - 1, 'utf-8') . ($last_letter == "t" ? "d" : "D");
-
-        if($integer !== false) $number = $integer;
-
-        $blending = "";
-        preg_match_all(self::$vowel, $last_3_letter, $vowels);
-        $suffix = "e";
-
-        if(count($vowels[0]) == 0) return ($number . ($integer ? "'" : "") . $blending . $suffix . "r");
-
-        if(preg_match('/(*UTF8)[aıAIouOU]/', $vowels[0][count($vowels[0]) - 1])) $suffix = "a";
-
-        if(preg_match(self::$vowel, $last_letter)) $blending = "ş";
-
-        return ($number . ($integer ? "'" : "") . $blending . $suffix . "r");
-    }
-
-    public static function distributive($number, $integer = false) {
-        return self::siraSayi($number, $integer);
-    }
-
-    /**
-     * This is for the numbers. It returns $callback function with given number's pronounce
-     *
-     * @param string $callback
-     * @param $noun
-     * @return mixed
-     */
-    public static function processForNumber($callback = 'belirtmeHali', $noun) {
-        $last_number = preg_split('/\D/', $noun);
-        $last_number = $last_number[count($last_number) - 1];
-
-        if($last_number == 0) {
-            // it is directly zero
-            return call_user_func('self::' . $callback, "fır", $noun);
-        }
-
-        //  We don't need a full word, last 3 letters'd be enough
-        $endings = [
-            '1' => 'bir',
-            '2' => 'iki',
-            '3' => 'üç',
-            '4' => 'ört',
-            '5' => 'beş',
-            '6' => 'ltı',
-            '7' => 'edi',
-            '8' => 'kiz',
-            '9' => 'kuz',
-            '10' => 'on',
-            '20' => 'rmi',
-            '30' => 'tuz',
-            '40' => 'ırk',
-            '50' => 'lli',
-            '60' => 'mış',
-            '70' => 'miş',
-            '80' => 'sen',
-            '90' => 'san'
-        ];
-
-        //  last number's length
-        $digit_length = mb_strlen($last_number);
-
-        //  Check last number
-        $last_1_letter = mb_substr($noun, -1, 1, 'utf-8');
-        $last_1_number = preg_split('/^\D/', $last_1_letter);
-        $last_1_number = $last_1_number[count($last_1_number) - 1];
-        if($last_1_number != "0") return call_user_func('self::' . $callback, $endings[intval($last_1_number)], $noun);
-
-
-        //  Check last two numbers
-        $last_2_letter = mb_substr($noun, -2, 2, 'utf-8');
-        $last_2_number = preg_split('/^\D/', $last_2_letter);
-        $last_2_number = $last_2_number[count($last_2_number) - 1];
-        if($last_2_number != "00") return call_user_func('self::' . $callback, $endings[intval($last_2_number)], $noun);
-
-        //  Check last three numbers
-        $last_3_letter = mb_substr($noun, -3, 3, 'utf-8');
-        $last_3_number = preg_split('/^\D/', $last_3_letter);
-        $last_3_number = $last_3_number[count($last_3_number) - 1];
-        if($last_3_number != "000") return call_user_func('self::' . $callback, "yüz", $noun);
-
-        //  Check last four numbers
-        $last_4_letter = mb_substr($noun, -4, 4, 'utf-8');
-        $last_4_number = preg_split('/^\D/', $last_4_letter);
-        $last_4_number = $last_4_number[count($last_4_number) - 1];
-        if($last_4_number != "0000" || $digit_length < 7) return call_user_func('self::' . $callback, "bin", $noun);
-
-        //  Check for the rest
-        if($digit_length >= 7) {
-            // if this is 8, 11, 14, etc.
-            if(($digit_length + 1) % 3 == 0) {
-                if($digit_length % 2 == 0) {
-                    return call_user_func('self::' . $callback, "yon", $noun);
-                } else {
-                    return call_user_func('self::' . $callback, "yar", $noun);
-                }
-            } elseif($digit_length % 3 == 0 || ($digit_length + 2) % 3 == 0) {
-                if($digit_length % 2 == 0) {
-                    return call_user_func('self::' . $callback, "yar", $noun);
-                } else {
-                    return call_user_func('self::' . $callback, "yon", $noun);
-                }
-            }
-        }
-
-        return call_user_func('self::' . $callback, $noun);
-    }
+
+class Turkce
+{
+	/*
+	|--------------------------------------------------------------------------
+	| Turkish Case Suffixes Class For PHP
+	|--------------------------------------------------------------------------
+	|
+	|   Should work with PHP >=5.4 up to PHP 8.x.
+	|
+	|   --------
+	|
+	|   PHP 5.4 ve PHP 8.x sürümlerinde çalışıyor olmalı.
+	|
+	*/
+
+	private static $nounPhraseEnds = '/(*UTF8)(oğlu|esi|aşı|işi|eşi|ağı|isi|iği|ığı|ıgı|oglu|okulu|leri|ları|lari|üğü|kısmı|kismi|bölümü|bolumu|merkezi|[aıeiouöü]s[ıiuü])$/ui';
+
+	//  This is a backup solution for noun phrases.
+	//  We'll directly look for the last word.
+	//  If $nouns count is more than one
+	//  and $last_noun (word) is in this array,
+	//  it's probably a noun phrase.
+	private static $nounPhraseWords = [
+		"okulu",
+		"odası",
+		"güzeli",
+		"paneli",
+		"suyu",
+		"denizi",
+		"gölü",
+		"yolu",
+		"lisesi",
+		"oğlu",
+		"kısmı",
+		"bölümü",
+		"merkezi",
+		"ünitesi"
+	];
+
+	//  Thin vowel exceptions (words with back vowels that take front-vowel suffixes)
+	private static $thinVowelExceptions = [
+		"saat",
+		"rol",
+		"gol",
+		"alkol",
+		"kalp",
+		"petrol",
+		"santral",
+		"hilal",
+		"terminal",
+		"moral",
+		"general",
+		"festival",
+		"sembol",
+		"kontrol",
+		"protokol"
+	];
+
+	private static $vowelRegex = '/(*UTF8)[oueiöüaıOUEİÖÜAI]/u';
+
+	//  Single letters for acronyms without vowels (TDK, TRT, 1B, etc.)
+	private static $singleLetters = [
+		"a" => "a", "b" => "be", "c" => "ce", "ç" => "çe", "d" => "de",
+		"e" => "e", "f" => "fe", "g" => "ge", "ğ" => "ğe", "h" => "he",
+		"ı" => "ı", "i" => "i", "j" => "je", "k" => "ke", "l" => "le",
+		"m" => "me", "n" => "ne", "o" => "o", "ö" => "ö", "p" => "pe",
+		"r" => "re", "s" => "se", "ş" => "şe", "t" => "te", "u" => "u",
+		"ü" => "ü", "v" => "ve", "y" => "ye", "z" => "ze",
+		"q" => "kü", "w" => "ve", "x" => "iks"
+	];
+
+	//  This is the simplest & fastest solution for now.
+	//  I really don't want to check last noun of given $noun,
+	//  bacause (for example vive) last noun can be a Turkish brand or something.
+	//  I'd suggest you to use $fake (like Turkce::accusativeCase("yıv", "view");).
+	//
+	//  Only for some brands, people, products, etc.
+	private static $pronounces = [
+		"apple" => "pıl",
+		"google" => "gıl",
+		"twitter" => "tır",
+		"youtube" => "tup",
+		"chrome" => "rom",
+		"developer" => "pır",
+		"board" => "ord",
+		"cardboard" => "ord",
+		"iphone" => "fon",
+		"ipad" => "ped",
+		"watch" => "voç",
+		"imessage" => "sıc",
+		"mac" => "mek",
+		"macbook" => "buk",
+		"php" => "çpi",
+		"steam" => "tim",
+		"valve" => "alv",
+		"messenger" => "cır",
+		"snapchat" => "çet",
+		"chat" => "çet",
+		"skype" => "ayp",
+		"unity" => "iti",
+		"spotify" => "fay",
+		"htc" => "ysi",
+		"half-life" => "ayf",
+		"halflife" => "ayf",
+		"htcvive" => "avy",
+		"9gag" => "geg",
+		"tv" => "ivi",
+		"usa" => "sey",
+		"maps" => "eps",
+		"cern" => "örn",
+		"adobe" => "dob",
+		"imdb" => "ibi",
+		"italy" => "ali",
+		"store" => "tor",
+		"appstore" => "tor",
+		"playstore" => "tor",
+		"psn" => "esen",
+		"xboxlive" => "ayv",
+		"einstein" => "ayn",
+		"xcode" => "kod",
+		"github" => "hab",
+		"bitbucket" => "kıt",
+		"slipknot" => "nat",
+		"maiden" => "dın",
+		"slayer" => "yır",
+		"thrones" => "ons",
+		"simpsons" => "ıns",
+		"guy" => "gay",
+		"wars" => "ors",
+		"vader" => "dır",
+		"beethoven" => "vın",
+		"vr" => "yar",
+		"ar" => "yar",
+		"station" => "şın",
+		"steamvr" => "yar",
+		"osvr" => "yar",
+		"first" => "öst",
+		"engine" => "cin",
+		"cryengine" => "cin",
+		"$" => "lar",
+		"€" => "uro",
+		"₺" => "ele",
+		"¥" => "yen",
+		"£" => "lin",
+		"tl" => "ele",
+		"+" => "tı",
+		"ios" => "ayoes",
+		"macos" => "oes",
+		"tvos" => "oes",
+		"watchos" => "oes",
+		"ipados" => "oes",
+		"visionos" => "oes",
+		"android" => "yid",
+		"windows" => "dovs",
+		"steamos" => "oes",
+		"linux" => "nuks",
+		"deck" => "dek",
+		"frame" => "reym",
+		"machine" => "şin",
+		"switch" => "viç",
+		"center" => "tır",
+		"services" => "sız",
+		"support" => "port",
+		"supporter" => "tır",
+		"discord" => "kord",
+		"paypal" => "pal",
+		"street" => "rit",
+		"game" => "geym",
+		"play" => "ley",
+		"blay" => "ley",
+		"playstation" => "şın",
+		"xbox" => "baks",
+		"series" => "riz",
+		"edition" => "şın",
+		"max" => "meks",
+		"plus" => "plas",
+		"ai" => "eyay",
+		"openai" => "eyay",
+		"chatgpt" => "piti",
+		"gpt" => "piti",
+		"gemini" => "nay",
+		"claude" => "klod",
+		"copilot" => "lıt",
+		"threads" => "reds",
+		"tiktok" => "tok",
+		"reels" => "ılz",
+		"shorts" => "şorts",
+		"twitch" => "viç",
+		"netflix" => "fliks",
+		"nvidia" => "vidya"
+	];
+
+	public static function filterAndTrim($noun)
+	{
+		return trim(preg_replace('/[^0-9a-zA-ZğĞüÜöÖşŞıİçÇ\s₺€$¥£]/u', '', (string)$noun));
+	}
+
+	public static function substr($noun, $charLength)
+	{
+		$len = mb_strlen((string)$noun, 'utf-8');
+		if($len === 0)
+			return "";
+		return $charLength >= $len ? $noun : mb_substr($noun, $len - $charLength, $charLength, 'utf-8');
+	}
+
+	private static function toTurkishLower($text)
+	{
+		$text = strtr((string)$text, ["İ" => "i", "I" => "ı"]);
+		return mb_strtolower($text, 'utf-8');
+	}
+
+	private static function checkHasPronounce($n)
+	{
+		$n = trim((string)$n);
+		if($n === '')
+			return null;
+
+		$words = preg_split('/\s+/u', $n);
+		$lastWord = self::toTurkishLower(end($words));
+
+		if((mb_substr($lastWord, 0, 1, 'utf-8') === '#' || mb_substr($lastWord, 0, 1, 'utf-8') === '@') && mb_strlen($lastWord, 'utf-8') > 1)
+		{
+			$key = mb_substr($lastWord, 1, null, 'utf-8');
+			if(isset(self::$pronounces[$key]))
+				return self::$pronounces[$key];
+		}
+
+		if(isset(self::$pronounces[$lastWord]))
+			return self::$pronounces[$lastWord];
+
+		if(preg_match('/(^|\d+|[\s\-_])([a-zA-ZğĞüÜöÖşŞıİçÇ])$/u', $n, $matches))
+		{
+			$char = self::toTurkishLower($matches[2]);
+			if(isset(self::$singleLetters[$char]))
+				return self::$singleLetters[$char];
+		}
+
+		// Acronym without vowels fallback (TDK, TRT, etc.)
+		if(mb_strlen($lastWord, 'utf-8') > 1 && !preg_match(self::$vowelRegex, $lastWord))
+		{
+			$lastChar = mb_substr($lastWord, -1, 1, 'utf-8');
+			if(isset(self::$singleLetters[$lastChar]))
+				return self::$singleLetters[$lastChar];
+		}
+
+		return null;
+	}
+
+	private static function isNounPhrase($nouns, $last_noun)
+	{
+		if(count($nouns) <= 1)
+			return false;
+		$clean = self::toTurkishLower(trim($last_noun));
+		return in_array($clean, self::$nounPhraseWords) || preg_match(self::$nounPhraseEnds, $clean);
+	}
+
+	private static function isThinException($word)
+	{
+		$w = self::toTurkishLower(trim($word));
+		return in_array($w, self::$thinVowelExceptions);
+	}
+
+	private static function getLastVowel($text)
+	{
+		$len = mb_strlen($text, 'utf-8');
+		$vowels = ['a', 'e', 'ı', 'i', 'o', 'ö', 'u', 'ü', 'A', 'E', 'I', 'İ', 'O', 'Ö', 'U', 'Ü'];
+		for($i = $len - 1; $i >= 0; $i--)
+		{
+			$ch = mb_substr($text, $i, 1, 'utf-8');
+			if(in_array($ch, $vowels))
+				return $ch;
+		}
+
+		return null;
+	}
+
+	private static function formatOutput($orgNoun, $blending, $suffix)
+	{
+		$hasQuote = preg_match('/["\']$/u', $orgNoun);
+		return $orgNoun . ($hasQuote ? '' : "'") . $blending . $suffix;
+	}
+
+	public static function belirtmeHali($noun, $fake = false)
+	{
+		$orgNoun = trim((string)$noun);
+		$noun = self::filterAndTrim($orgNoun);
+		$isFake = $fake !== false && $fake !== "";
+
+		if(!$isFake)
+		{
+			$fake_ = self::checkHasPronounce($noun);
+			if($fake_ !== null)
+			{
+				$fake = $orgNoun;
+				$noun = $fake_;
+				$isFake = true;
+			}
+		}
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $noun))
+			return self::processForNumber(__FUNCTION__, $orgNoun);
+
+		$last_letter = self::substr($noun, 1);
+		$last_3 = self::substr($noun, 3);
+		$nouns = preg_split('/\s+/u', $noun, -1, PREG_SPLIT_NO_EMPTY);
+		$last_noun = !empty($nouns) ? end($nouns) : "";
+
+		if($isFake)
+			$orgNoun = $fake;
+
+		$blending = "";
+		if(mb_strlen($last_letter, 'utf-8') > 0 && preg_match(self::$vowelRegex, $last_letter))
+			$blending = "y";
+
+		if(self::isNounPhrase($nouns, $last_noun))
+			$blending = "n";
+
+		$suffix = "i";
+		if(self::isThinException($last_noun))
+		{
+			$suffix = "i";
+		}
+		else
+		{
+			$last_vowel = self::getLastVowel($last_3);
+			if($last_vowel !== null)
+			{
+				$v = self::toTurkishLower($last_vowel);
+				if($v === 'ö' || $v === 'ü')
+					$suffix = "ü";
+				else if($v === 'a' || $v === 'ı')
+					$suffix = "ı";
+				else if($v === 'o' || $v === 'u')
+					$suffix = "u";
+			}
+		}
+
+		return self::formatOutput($orgNoun, $blending, $suffix);
+	}
+
+	public static function accusativeCase($noun, $fake = false) { return self::belirtmeHali($noun, $fake); }
+	public static function yi($noun, $fake = false) { return self::belirtmeHali($noun, $fake); }
+
+	public static function yonelmeHali($noun, $fake = false)
+	{
+		$orgNoun = trim((string)$noun);
+		$noun = self::filterAndTrim($orgNoun);
+		$isFake = $fake !== false && $fake !== "";
+
+		if(!$isFake)
+		{
+			$fake_ = self::checkHasPronounce($noun);
+			if($fake_ !== null)
+			{
+				$fake = $orgNoun;
+				$noun = $fake_;
+				$isFake = true;
+			}
+		}
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $noun))
+			return self::processForNumber(__FUNCTION__, $orgNoun);
+
+		$last_letter = self::substr($noun, 1);
+		$last_3 = self::substr($noun, 3);
+		$nouns = preg_split('/\s+/u', $noun, -1, PREG_SPLIT_NO_EMPTY);
+		$last_noun = !empty($nouns) ? end($nouns) : "";
+
+		if($isFake)
+			$orgNoun = $fake;
+
+		$blending = "";
+		if(mb_strlen($last_letter, 'utf-8') > 0 && preg_match(self::$vowelRegex, $last_letter))
+			$blending = "y";
+
+		if(self::isNounPhrase($nouns, $last_noun))
+			$blending = "n";
+
+		$suffix = "e";
+		if(!self::isThinException($last_noun))
+		{
+			$last_vowel = self::getLastVowel($last_3);
+			if($last_vowel !== null)
+			{
+				$v = self::toTurkishLower($last_vowel);
+				if($v === 'a' || $v === 'ı' || $v === 'o' || $v === 'u')
+					$suffix = "a";
+			}
+		}
+
+		return self::formatOutput($orgNoun, $blending, $suffix);
+	}
+
+	public static function dativeCase($noun, $fake = false) { return self::yonelmeHali($noun, $fake); }
+	public static function ye($noun, $fake = false) { return self::yonelmeHali($noun, $fake); }
+
+	public static function bulunmaHali($noun, $fake = false)
+	{
+		$orgNoun = trim((string)$noun);
+		$noun = self::filterAndTrim($orgNoun);
+		$isFake = $fake !== false && $fake !== "";
+
+		if(!$isFake)
+		{
+			$fake_ = self::checkHasPronounce($noun);
+			if($fake_ !== null)
+			{
+				$fake = $orgNoun;
+				$noun = $fake_;
+				$isFake = true;
+			}
+		}
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $noun))
+			return self::processForNumber(__FUNCTION__, $orgNoun);
+
+		$last_letter = self::substr($noun, 1);
+		$last_3 = self::substr($noun, 3);
+		$nouns = preg_split('/\s+/u', $noun, -1, PREG_SPLIT_NO_EMPTY);
+		$last_noun = !empty($nouns) ? end($nouns) : "";
+
+		if($isFake)
+			$orgNoun = $fake;
+
+		$blending = "";
+		if(self::isNounPhrase($nouns, $last_noun))
+			$blending = "n";
+
+		$suffix = "d";
+		$suffix_ = "e";
+
+		if(preg_match('/(*UTF8)[pçktfşhPÇKTFŞH]/u', $last_letter))
+			$suffix = "t";
+		if(preg_match('/(*UTF8)şk|ŞK/u', $last_3))
+			$suffix_ = "a";
+
+		if(!self::isThinException($last_noun))
+		{
+			$last_vowel = self::getLastVowel($last_3);
+			if($last_vowel !== null)
+			{
+				$v = self::toTurkishLower($last_vowel);
+				if($v === 'a' || $v === 'ı' || $v === 'o' || $v === 'u')
+					$suffix_ = "a";
+				else if($v === 'e' || $v === 'i' || $v === 'ö' || $v === 'ü')
+					$suffix_ = "e";
+			}
+		}
+
+		return self::formatOutput($orgNoun, $blending, $suffix . $suffix_);
+	}
+
+	public static function locativeCase($noun, $fake = false) { return self::bulunmaHali($noun, $fake); }
+	public static function de($noun, $fake = false) { return self::bulunmaHali($noun, $fake); }
+
+	public static function ayrilmaHali($noun, $fake = false)
+	{
+		$orgNoun = trim((string)$noun);
+		$noun = self::filterAndTrim($orgNoun);
+		$isFake = $fake !== false && $fake !== "";
+
+		if(!$isFake)
+		{
+			$fake_ = self::checkHasPronounce($noun);
+			if($fake_ !== null)
+			{
+				$fake = $orgNoun;
+				$noun = $fake_;
+				$isFake = true;
+			}
+		}
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $noun))
+			return self::processForNumber(__FUNCTION__, $orgNoun);
+
+		$last_letter = self::substr($noun, 1);
+		$last_3 = self::substr($noun, 3);
+		$nouns = preg_split('/\s+/u', $noun, -1, PREG_SPLIT_NO_EMPTY);
+		$last_noun = !empty($nouns) ? end($nouns) : "";
+
+		if($isFake)
+			$orgNoun = $fake;
+
+		$blending = "";
+		if(self::isNounPhrase($nouns, $last_noun))
+			$blending = "n";
+
+		$suffix = "d";
+		$suffix_ = "e";
+
+		if(preg_match('/(*UTF8)[pçktfşhPÇKTFŞH]/u', $last_letter))
+			$suffix = "t";
+		if(preg_match('/(*UTF8)şk|ŞK/u', $last_3))
+			$suffix_ = "a";
+
+		if(!self::isThinException($last_noun))
+		{
+			$last_vowel = self::getLastVowel($last_3);
+			if($last_vowel !== null)
+			{
+				$v = self::toTurkishLower($last_vowel);
+				if($v === 'a' || $v === 'ı' || $v === 'o' || $v === 'u')
+					$suffix_ = "a";
+				else if($v === 'e' || $v === 'i' || $v === 'ö' || $v === 'ü')
+					$suffix_ = "e";
+			}
+		}
+
+		return self::formatOutput($orgNoun, $blending, $suffix . $suffix_ . "n");
+	}
+
+	public static function ablativeCase($noun, $fake = false) { return self::ayrilmaHali($noun, $fake); }
+	public static function den($noun, $fake = false) { return self::ayrilmaHali($noun, $fake); }
+
+	public static function sahiplikHali($noun, $fake = false)
+	{
+		$orgNoun = trim((string)$noun);
+		$noun = self::filterAndTrim($orgNoun);
+		$isFake = $fake !== false && $fake !== "";
+
+		if(!$isFake)
+		{
+			$fake_ = self::checkHasPronounce($noun);
+			if($fake_ !== null)
+			{
+				$fake = $orgNoun;
+				$noun = $fake_;
+				$isFake = true;
+			}
+		}
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $noun))
+			return self::processForNumber(__FUNCTION__, $orgNoun);
+
+		$last_letter = self::substr($noun, 1);
+		$last_3 = self::substr($noun, 3);
+		$nouns = preg_split('/\s+/u', $noun, -1, PREG_SPLIT_NO_EMPTY);
+		$last_noun = !empty($nouns) ? end($nouns) : "";
+
+		if($isFake)
+			$orgNoun = $fake;
+
+		$blending = "";
+		if(mb_strlen($last_letter, 'utf-8') > 0 && preg_match(self::$vowelRegex, $last_letter))
+			$blending = "n";
+
+		$suffix = "i";
+		if(self::isThinException($last_noun))
+		{
+			$suffix = "i";
+		}
+		else
+		{
+			$last_vowel = self::getLastVowel($last_3);
+			if($last_vowel !== null)
+			{
+				$v = self::toTurkishLower($last_vowel);
+				if($v === 'ö' || $v === 'ü')
+					$suffix = "ü";
+				else if($v === 'a' || $v === 'ı')
+					$suffix = "ı";
+				else if($v === 'o' || $v === 'u')
+					$suffix = "u";
+			}
+		}
+
+		return self::formatOutput($orgNoun, $blending, $suffix . "n");
+	}
+
+	public static function genitiveCase($noun, $fake = false) { return self::sahiplikHali($noun, $fake); }
+	public static function nin($noun, $fake = false) { return self::sahiplikHali($noun, $fake); }
+
+	public static function vasitaHali($noun, $fake = false)
+	{
+		$orgNoun = trim((string)$noun);
+		$noun = self::filterAndTrim($orgNoun);
+		$isFake = $fake !== false && $fake !== "";
+
+		if(!$isFake)
+		{
+			$fake_ = self::checkHasPronounce($noun);
+			if($fake_ !== null)
+			{
+				$fake = $orgNoun;
+				$noun = $fake_;
+				$isFake = true;
+			}
+		}
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $noun))
+			return self::processForNumber(__FUNCTION__, $orgNoun);
+
+		$last_letter = self::substr($noun, 1);
+		$last_3 = self::substr($noun, 3);
+		$nouns = preg_split('/\s+/u', $noun, -1, PREG_SPLIT_NO_EMPTY);
+		$last_noun = !empty($nouns) ? end($nouns) : "";
+
+		if($isFake)
+			$orgNoun = $fake;
+
+		$blending = "";
+		if(mb_strlen($last_letter, 'utf-8') > 0 && preg_match(self::$vowelRegex, $last_letter))
+			$blending = "y";
+
+		$suffix = "e";
+		if(!self::isThinException($last_noun))
+		{
+			$last_vowel = self::getLastVowel($last_3);
+			if($last_vowel !== null)
+			{
+				$v = self::toTurkishLower($last_vowel);
+				if($v === 'a' || $v === 'ı' || $v === 'o' || $v === 'u')
+					$suffix = "a";
+			}
+		}
+
+		return self::formatOutput($orgNoun, $blending, "l" . $suffix);
+	}
+
+	public static function comitativeCase($noun, $fake = false) { return self::vasitaHali($noun, $fake); }
+	public static function ile($noun, $fake = false) { return self::vasitaHali($noun, $fake); }
+
+	public static function dahiBaglac($noun, $fake = false)
+	{
+		$orgNoun = trim((string)$noun);
+		$noun = self::filterAndTrim($orgNoun);
+		$isFake = $fake !== false && $fake !== "";
+
+		if(!$isFake)
+		{
+			$fake_ = self::checkHasPronounce($noun);
+			if($fake_ !== null)
+			{
+				$fake = $orgNoun;
+				$noun = $fake_;
+				$isFake = true;
+			}
+		}
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $noun))
+			return self::processForNumber(__FUNCTION__, $orgNoun);
+
+		$last_3 = self::substr($noun, 3);
+		$nouns = preg_split('/\s+/u', $noun, -1, PREG_SPLIT_NO_EMPTY);
+		$last_noun = !empty($nouns) ? end($nouns) : "";
+
+		if($isFake)
+			$orgNoun = $fake;
+
+		$blending = "d";
+		$suffix = "e";
+
+		if(!self::isThinException($last_noun))
+		{
+			$last_vowel = self::getLastVowel($last_3);
+			if($last_vowel !== null)
+			{
+				$v = self::toTurkishLower($last_vowel);
+				if($v === 'a' || $v === 'ı' || $v === 'o' || $v === 'u')
+					$suffix = "a";
+			}
+		}
+
+		return $orgNoun . " " . $blending . $suffix;
+	}
+
+	public static function conjunction($noun, $fake = false) { return self::dahiBaglac($noun, $fake); }
+	public static function dahi($noun, $fake = false) { return self::dahiBaglac($noun, $fake); }
+
+	public static function siraSayi($number, $integer = false)
+	{
+		$number = trim((string)$number);
+		$isFake = $integer !== false && $integer !== "";
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $number))
+			return self::processForNumber(__FUNCTION__, $number);
+
+		$last_letter = self::substr($number, 1);
+		$last_3 = self::substr($number, 3);
+
+		//  Check if the ending with "ört", if so make it "örd" (only for "dört")
+		if(self::toTurkishLower($last_3) === "ört")
+			$number = mb_substr($number, 0, mb_strlen($number, 'utf-8') - 1, 'utf-8') . ($last_letter === "t" ? "d" : "D");
+
+		if($isFake)
+			$number = $integer;
+
+		$last_vowel = self::getLastVowel($last_3);
+		$suffix = "i";
+
+		if($last_vowel !== null)
+		{
+			$v = self::toTurkishLower($last_vowel);
+			if($v === 'ö' || $v === 'ü')
+				$suffix = "ü";
+			else if($v === 'a' || $v === 'ı')
+				$suffix = "ı";
+			else if($v === 'o' || $v === 'u')
+				$suffix = "u";
+		}
+
+		$blending = (mb_strlen($last_letter, 'utf-8') > 0 && !preg_match(self::$vowelRegex, $last_letter)) ? $suffix : "";
+		return $number . ($isFake ? "'" : "") . $blending . "nc" . $suffix;
+	}
+
+	public static function ordinalNumber($number, $integer = false) { return self::siraSayi($number, $integer); }
+	public static function nci($number, $integer = false) { return self::siraSayi($number, $integer); }
+
+	public static function ulestirme($number, $integer = false)
+	{
+		$number = trim((string)$number);
+		$isFake = $integer !== false && $integer !== "";
+
+		//  Check the ending if it's a number
+		if(preg_match('/\d$/u', $number))
+			return self::processForNumber(__FUNCTION__, $number);
+
+		$last_letter = self::substr($number, 1);
+		$last_3 = self::substr($number, 3);
+
+		//  Check if the ending with "ört", if so make it "örd" (only for "dört")
+		if(self::toTurkishLower($last_3) === "ört")
+			$number = mb_substr($number, 0, mb_strlen($number, 'utf-8') - 1, 'utf-8') . ($last_letter === "t" ? "d" : "D");
+
+		if($isFake)
+			$number = $integer;
+
+		$blending = "";
+		$last_vowel = self::getLastVowel($last_3);
+		$suffix = "e";
+
+		if($last_vowel !== null)
+		{
+			$v = self::toTurkishLower($last_vowel);
+			if($v === 'a' || $v === 'ı' || $v === 'o' || $v === 'u')
+				$suffix = "a";
+		}
+
+		if(mb_strlen($last_letter, 'utf-8') > 0 && preg_match(self::$vowelRegex, $last_letter))
+			$blending = "ş";
+
+		return $number . ($isFake ? "'" : "") . $blending . $suffix . "r";
+	}
+
+	public static function distributive($number, $integer = false) { return self::ulestirme($number, $integer); }
+	public static function er($number, $integer = false) { return self::ulestirme($number, $integer); }
+
+	private static function processForNumber($callback = 'belirtmeHali', $noun = '')
+	{
+		$filteredNoun = self::filterAndTrim($noun);
+		$lastNumberArray = preg_split('/\D+/u', (string)$filteredNoun);
+		$lastNumber = "";
+
+		for($i = count($lastNumberArray) - 1; $i >= 0; $i--)
+		{
+			if($lastNumberArray[$i] !== "")
+			{
+				$lastNumber = $lastNumberArray[$i];
+				break;
+			}
+		}
+
+		if($lastNumber === "0")
+		{
+			// it is directly zero
+			return call_user_func([__CLASS__, $callback], "fır", $noun);
+		}
+
+		//  We don't need a full word, last 3 letters'd be enough
+		$endings = [
+			"1" => "bir",
+			"2" => "iki",
+			"3" => "üç",
+			"4" => "ört",
+			"5" => "beş",
+			"6" => "ltı",
+			"7" => "edi",
+			"8" => "kiz",
+			"9" => "kuz",
+			"10" => "on",
+			"20" => "rmi",
+			"30" => "tuz",
+			"40" => "ırk",
+			"50" => "lli",
+			"60" => "mış",
+			"70" => "miş",
+			"80" => "sen",
+			"90" => "san"
+		];
+
+		//  last number's length
+		$digitLength = mb_strlen($lastNumber, 'utf-8');
+
+		//  Check last number
+		$last1 = self::substr($lastNumber, 1);
+		if($last1 !== "0" && isset($endings[$last1]))
+			return call_user_func([__CLASS__, $callback], $endings[$last1], $noun);
+
+		//  Check last two numbers
+		$last2 = self::substr($lastNumber, 2);
+		if($last2 !== "00" && isset($endings[$last2]))
+			return call_user_func([__CLASS__, $callback], $endings[$last2], $noun);
+
+		//  Check last three numbers
+		$last3 = self::substr($lastNumber, 3);
+		if($last3 !== "000")
+			return call_user_func([__CLASS__, $callback], "yüz", $noun);
+
+		//  Check last four numbers
+		$last4 = self::substr($lastNumber, 4);
+		if($last4 !== "0000" || $digitLength < 7)
+			return call_user_func([__CLASS__, $callback], "bin", $noun);
+
+		//  Check for the rest
+		// if this is 8, 11, 14, etc.
+		if(($digitLength + 1) % 3 === 0)
+			return call_user_func([__CLASS__, $callback], $digitLength % 2 === 0 ? "yon" : "yar", $noun);
+
+		if($digitLength % 3 === 0 || ($digitLength + 2) % 3 === 0)
+			return call_user_func([__CLASS__, $callback], $digitLength % 2 === 0 ? "yar" : "yon", $noun);
+
+		return call_user_func([__CLASS__, $callback], $noun, "");
+	}
 }

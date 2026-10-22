@@ -1,667 +1,834 @@
 /**
- * Created by IntelliJ IDEA.
  * Author: A. Utku Sipahioğlu (http://teorikdeli.com)
- * Company: Siis (http://siis.com.tr | http://siisgames.com)
+ * Company: Siis (https://siis.com.tr | https://siisgames.com) & Blay Games (https://blaygames.com)
  *
  * License: MIT
  * https://github.com/SiisOfficial/turkish-suffixes
  *
- * Demo & detailed usage: http://siis.com.tr/turkish-suffixes
+ * Demo & detailed usage: https://siis.com.tr/turkish-suffixes
  *
- * Version: 1.5
+ * Version: 1.6
  */
+
+function toTurkishLowerCase(text) {
+    return text.replace(/[Iİ]/g, function (character) {
+        return character === "I" ? "ı" : "i";
+    }).toLowerCase();
+}
+
 var Turkce = {
     /*
-     |--------------------------------------------------------------------------
-     | Turkish Case Suffixes For JavaScript
-     |--------------------------------------------------------------------------
-     |
-     |   Should work with all browsers.
-     |
-     |   --------
-     |
-     |   Tüm tarayıcılarda çalışıyor olmalı.
-     |
-     */
+    |--------------------------------------------------------------------------
+    | Turkish Case Suffixes For JavaScript
+    |--------------------------------------------------------------------------
+    |
+    |   Should work with all modern browsers and Node.js.
+    |
+    |   --------
+    |
+    |   Tüm modern tarayıcılarda ve Node.js ortamında çalışıyor olmalı.
+    |
+    */
 
-    nounPhraseEnds: /oğlu$|esi$|aşı$|işi$|eşi$|ağı$|isi$|iği$|ığı$|ıgı$|oglu$|okulu$|leri$|ları$|lari$|üğü$/i,
+    nounPhraseRegex: /(oğlu|esi|aşı|işi|eşi|ağı|isi|iği|ığı|ıgı|oglu|okulu|leri|ları|lari|üğü|kısmı|kismi|bölümü|bolumu|merkezi|[aıeiouöü]s[ıiuü])$/i,
 
     //  This is a backup solution for noun phrases.
     //  We'll directly look for the last word.
-    //  If var nouns count is more than one
-    //  and var last_noun (word) is in this array,
+    //  If nouns count is more than one
+    //  and last_noun (word) is in this array,
     //  it's probably a noun phrase.
     nounPhraseWords: [
-        'okulu',
-        'odası',
-        'güzeli',
-        'paneli',
-        'suyu',
-        'denizi',
-        'gölü',
-        'yolu',
-        'lisesi',
-        'oğlu'
+        "okulu",
+        "odası",
+        "güzeli",
+        "paneli",
+        "suyu",
+        "denizi",
+        "gölü",
+        "yolu",
+        "lisesi",
+        "oğlu",
+        "kısmı",
+        "bölümü",
+        "merkezi",
+        "ünitesi"
     ],
 
-    vowel: /[oueiöüaıOUEİÖÜAI]/,
-    vowelE: /[oueiöüaıOUEİÖÜAI]$/,
-    vowelG: /[oueiöüaıOUEİÖÜAI]/g,
+    //  Thin vowel exceptions (words with back vowels that take front-vowel suffixes)
+    thinVowelExceptions: [
+        "saat",
+        "rol",
+        "gol",
+        "alkol",
+        "kalp",
+        "petrol",
+        "santral",
+        "hilal",
+        "terminal",
+        "moral",
+        "general",
+        "festival",
+        "sembol",
+        "kontrol",
+        "protokol"
+    ],
+
+    vowelRegex: /[oueiöüaıOUEİÖÜAI]/,
+    filterRegex: /[^0-9a-zA-ZğĞüÜöÖşŞıİçÇ\s₺€$¥£]/g,
+
+    //  Single letters for acronyms without vowels (TDK, TRT, 1B, etc.)
+    singleLetters: {
+        "a": "a", "b": "be", "c": "ce", "ç": "çe", "d": "de",
+        "e": "e", "f": "fe", "g": "ge", "ğ": "ğe", "h": "he",
+        "ı": "ı", "i": "i", "j": "je", "k": "ke", "l": "le",
+        "m": "me", "n": "ne", "o": "o", "ö": "ö", "p": "pe",
+        "r": "re", "s": "se", "ş": "şe", "t": "te", "u": "u",
+        "ü": "ü", "v": "ve", "y": "ye", "z": "ze",
+        "q": "kü", "w": "ve", "x": "iks"
+    },
 
     //  This is the simplest & fastest solution for now.
-    //  I really don't want to check last noun of given var noun,
+    //  I really don't want to check last noun of given noun,
     //  bacause (for example vive) last noun can be a Turkish brand or something.
-    //  I'd suggest you to use var fake (like Turkce.accusativeCase("yıv", "view");).
+    //  I'd suggest you to use fake (like Turkce.accusativeCase("yıv", "view");).
     //
     //  Only for some brands, people, products, etc.
     pronounces: {
-        'apple': 'pıl',
-        'google': 'gıl',
-        'twitter': 'tır',
-        'youtube': 'tup',
-        'chrome': 'rom',
-        'developer': 'pır',
-        'appledeveloper': 'pır',
-        'googledeveloper': 'pır',
-        'facebookdeveloper': 'pır',
-        'googlecardboard': 'ord',
-        'cardboard': 'ord',
-        'iphone': 'fon',
-        'ipad': 'ped',
-        'watch': 'voç',
-        'appleiphone': 'fon',
-        'appleipad': 'ped',
-        'applewatch': 'voç',
-        'imessage': 'sıc',
-        'php': 'çpi',
-        'steam': 'tim',
-        'valve': 'alv',
-        'facebookmessenger': 'cır',
-        'messenger': 'cır',
-        'snapchat': 'çet',
-        'chat': 'çet',
-        'skype': 'ayp',
-        'unity': 'iti',
-        'spotify': 'fay',
-        'htc': 'ysi',
-        'half-life': 'ayf',
-        'halflife': 'ayf',
-        'htcvive': 'avy',
-        '9gag': 'geg',
-        'tv': 'ivi',
-        'appletv': 'ivi',
-        'usa': 'sey',
-        'googlemaps': 'eps',
-        'maps': 'eps',
-        'cern': 'örn',
-        'adobe': 'dob',
-        'imdb': 'ibi',
-        'italy': 'ali',
-        'store': 'tor',
-        'appstore': 'tor',
-        'playstore': 'tor',
-        'elonmusk': 'ask',
-        'einstein': 'ayn',
-        'xcode': 'kod',
-        'github': 'hab',
-        'bitbucket': 'kıt',
-        'slipknot': 'nat',
-        'ironmaiden': 'dın',
-        'slayer': 'yır',
-        'gameofthrones': 'ons',
-        'thesimpsons': 'ıns',
-        'familyguy': 'gay',
-        'starwars': 'ors',
-        'darthvader': 'dır',
-        'beethoven': 'vın',
-        'vr': 'yar',
-        'playstationvr': 'yar',
-        'gearvr': 'yar',
-        'googlevr': 'yar',
-        'steamvr': 'yar',
-        'osvr': 'yar',
-        'vrfirst': 'öst',
-        'unrealengine': 'cin',
-        'cryengine': 'cin',
-        '$': 'lar',
-        '€': 'uro',
-        '₺': 'ele'
+        "apple": "pıl",
+        "google": "gıl",
+        "twitter": "tır",
+        "youtube": "tup",
+        "chrome": "rom",
+        "developer": "pır",
+        "board": "ord",
+        "cardboard": "ord",
+        "iphone": "fon",
+        "ipad": "ped",
+        "watch": "voç",
+        "imessage": "sıc",
+        "mac": "mek",
+        "macbook": "buk",
+        "php": "çpi",
+        "steam": "tim",
+        "valve": "alv",
+        "messenger": "cır",
+        "snapchat": "çet",
+        "chat": "çet",
+        "skype": "ayp",
+        "unity": "iti",
+        "spotify": "fay",
+        "htc": "ysi",
+        "half-life": "ayf",
+        "halflife": "ayf",
+        "htcvive": "avy",
+        "9gag": "geg",
+        "tv": "ivi",
+        "usa": "sey",
+        "maps": "eps",
+        "cern": "örn",
+        "adobe": "dob",
+        "imdb": "ibi",
+        "italy": "ali",
+        "store": "tor",
+        "appstore": "tor",
+        "playstore": "tor",
+        "psn": "esen",
+        "xboxlive": "ayv",
+        "einstein": "ayn",
+        "xcode": "kod",
+        "github": "hab",
+        "bitbucket": "kıt",
+        "slipknot": "nat",
+        "maiden": "dın",
+        "slayer": "yır",
+        "thrones": "ons",
+        "simpsons": "ıns",
+        "guy": "gay",
+        "wars": "ors",
+        "vader": "dır",
+        "beethoven": "vın",
+        "vr": "yar",
+        "ar": "yar",
+        "station": "şın",
+        "steamvr": "yar",
+        "osvr": "yar",
+        "first": "öst",
+        "engine": "cin",
+        "cryengine": "cin",
+        "$": "lar",
+        "€": "uro",
+        "₺": "ele",
+        "¥": "yen",
+        "£": "lin",
+        "tl": "ele",
+        "+": "tı",
+        "ios": "ayoes",
+        "macos": "oes",
+        "tvos": "oes",
+        "watchos": "oes",
+        "ipados": "oes",
+        "visionos": "oes",
+        "android": "yid",
+        "windows": "dovs",
+        "steamos": "oes",
+        "linux": "nuks",
+        "deck": "dek",
+        "frame": "reym",
+        "machine": "şin",
+        "switch": "viç",
+        "center": "tır",
+        "services": "sız",
+        "support": "port",
+        "supporter": "tır",
+        "discord": "kord",
+        "paypal": "pal",
+        "street": "rit",
+        "game": "geym",
+        "play": "ley",
+        "blay": "ley",
+        "playstation": "şın",
+        "xbox": "baks",
+        "series": "riz",
+        "edition": "şın",
+        "max": "meks",
+        "plus": "plas",
+        "ai": "eyay",
+        "openai": "eyay",
+        "chatgpt": "piti",
+        "gpt": "piti",
+        "gemini": "nay",
+        "claude": "klod",
+        "copilot": "lıt",
+        "threads": "reds",
+        "tiktok": "tok",
+        "reels": "ılz",
+        "shorts": "şorts",
+        "twitch": "viç",
+        "netflix": "fliks",
+        "nvidia": "vidya"
     },
 
-    /**
-     * Checks the fake variable if it's undefined.
-     * If so, sets it's default value to false.
-     *
-     * @param v
-     * @returns {boolean || string}
-     */
-    isFake: function(v) {
-        return (typeof v == "undefined" ? false : v);
+    isVowel: function (c) {
+        return c === "a" || c === "e" || c === "ı" || c === "i" ||
+            c === "o" || c === "ö" || c === "u" || c === "ü" ||
+            c === "A" || c === "E" || c === "I" || c === "İ" ||
+            c === "O" || c === "Ö" || c === "U" || c === "Ü";
     },
 
-    /**
-     * Checks the noun if it has a pronounce in pronounces
-     *
-     * @param n
-     * @returns {boolean || string}
-     */
-    checkHasPronounce: function(n) {
-        n = n.replace(/ /g, "").toLowerCase();
-        var pronounce;
-
-        if((n.substr(0, 1) == "#" || n.substr(0, 1) == "@") && (pronounce = Turkce.pronounces[n.substr(1)])) {
-            return pronounce;
-        } else if(pronounce = Turkce.pronounces[n]) {
-            return pronounce;
+    getLastVowel: function (text) {
+        for (var i = text.length - 1; i >= 0; i--) {
+            if (this.isVowel(text[i]))
+                return text[i];
         }
 
-        return false;
+        return null;
     },
 
-    /**
-     * Accusative case
-     *
-     * @param noun
-     * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     * @returns {string}
-     */
-    belirtmeHali: function(noun, fake) {
-        noun = noun.toString().trim();
-        fake = Turkce.isFake(fake);
-        var fake_;
+    substr: function (noun, charLength) {
+        if (!noun)
+            return "";
+        return charLength >= noun.length ? noun : noun.substring(noun.length - charLength);
+    },
 
-        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
-            fake = noun;
-            noun = fake_;
+    filterAndTrim: function (noun) {
+        if (!noun)
+            return "";
+        return noun.toString().replace(this.filterRegex, "").trim();
+    },
+
+    checkHasPronounce: function (n) {
+        if (!n || !n.toString().trim())
+            return null;
+
+        var str = n.toString().trim();
+        var lastSpace = str.lastIndexOf(" ");
+        var lastWord = toTurkishLowerCase(lastSpace >= 0 ? str.substring(lastSpace + 1) : str);
+
+        if ((lastWord.charAt(0) === "#" || lastWord.charAt(0) === "@") && lastWord.length > 1) {
+            var tagKey = lastWord.substring(1);
+            if (this.pronounces.hasOwnProperty(tagKey))
+                return this.pronounces[tagKey];
+        }
+
+        if (this.pronounces.hasOwnProperty(lastWord))
+            return this.pronounces[lastWord];
+
+        var match = str.match(/(^|\d+|[\s\-_])([a-zA-ZğĞüÜöÖşŞıİçÇ])$/);
+        if (match) {
+            var charKey = toTurkishLowerCase(match[2]);
+            if (this.singleLetters.hasOwnProperty(charKey))
+                return this.singleLetters[charKey];
+        }
+
+        // Acronym without vowels fallback (TDK, TRT, etc.)
+        if (lastWord.length > 1 && !this.vowelRegex.test(lastWord)) {
+            var lastChar = lastWord.charAt(lastWord.length - 1);
+            if (this.singleLetters.hasOwnProperty(lastChar))
+                return this.singleLetters[lastChar];
+        }
+
+        return null;
+    },
+
+    isNounPhrase: function (nouns, lastNoun) {
+        if (nouns.length <= 1)
+            return false;
+        var clean = toTurkishLowerCase(lastNoun);
+        return this.nounPhraseWords.indexOf(clean) !== -1 || this.nounPhraseRegex.test(clean);
+    },
+
+    isThinException: function (word) {
+        return this.thinVowelExceptions.indexOf(toTurkishLowerCase(word.trim())) !== -1;
+    },
+
+    formatOutput: function (orgNoun, blending, suffix) {
+        var hasQuote = /["']$/.test(orgNoun);
+        return orgNoun + (hasQuote ? "" : "'") + blending + suffix;
+    },
+
+    belirtmeHali: function (noun, fake) {
+        var orgNoun = noun != null ? noun.toString().trim() : "";
+        noun = this.filterAndTrim(orgNoun);
+        var isFake = fake != null && fake !== false && fake !== "";
+
+        if (!isFake) {
+            var fake_ = this.checkHasPronounce(noun);
+            if (fake_ != null) {
+                fake = orgNoun;
+                noun = fake_;
+                isFake = true;
+            }
         }
 
         //  Check the ending if it's a number
-        if(/\d$/.test(noun)) return this.processForNumber(this.belirtmeHali, noun);
+        if (/\d$/.test(noun))
+            return this.processForNumber(this.belirtmeHali.bind(this), orgNoun);
 
-        var last_letter      = noun.substr(-1, 1),
-            last_3_letter    = noun.substr(-3, 3),
-            nouns            = noun.split(' '),
-            noun_length      = nouns.length,
-            last_noun        = nouns[noun_length - 1],
-            last_noun_length = last_noun.length;
+        var lastLetter = this.substr(noun, 1);
+        var last3 = this.substr(noun, 3);
+        var nouns = noun.split(/\s+/).filter(Boolean);
+        var lastNoun = nouns.length > 0 ? nouns[nouns.length - 1] : "";
 
-        if(fake !== false) noun = fake;
-
-        console.log(nouns[noun_length - 1].toLowerCase());
+        if (isFake)
+            orgNoun = fake;
 
         var blending = "";
-        if((Turkce.vowel.test(last_letter) || (/[çÇ]/.test(last_3_letter) && Turkce.vowelE.test(last_letter))) && !/[ğçĞÇ]/.test(last_letter) && !/^çü|^ÇÜ|^ÇÖ|^çö/.test(last_3_letter)) blending = "y";
-        if(Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1)) blending = "n";
+        if (lastLetter.length > 0 && this.isVowel(lastLetter.charAt(0)))
+            blending = "y";
 
-        var vovels = last_3_letter.match(Turkce.vowelG),
+        if (this.isNounPhrase(nouns, lastNoun))
+            blending = "n";
+
+        var suffix = "i";
+        if (this.isThinException(lastNoun)) {
             suffix = "i";
+        } else {
+            var lastVowel = this.getLastVowel(last3);
+            if (lastVowel != null) {
+                var v = toTurkishLowerCase(lastVowel);
+                if (v === "ö" || v === "ü")
+                    suffix = "ü";
+                else if (v === "a" || v === "ı")
+                    suffix = "ı";
+                else if (v === "o" || v === "u")
+                    suffix = "u";
+            }
+        }
 
-        if(vovels == null) return (noun + "'" + blending + suffix);
-
-        if(/[öüÖÜ]/.test(vovels[(vovels.length) - 1])) suffix = "ü";
-        if(/[aıAI]/.test(vovels[(vovels.length) - 1])) suffix = "ı";
-        if(/[ouOU]/.test(vovels[(vovels.length) - 1])) suffix = "u";
-
-        return (noun + "'" + blending + suffix);
+        return this.formatOutput(orgNoun, blending, suffix);
     },
-    accusativeCase: function(noun, fake) {
+
+    accusativeCase: function (noun, fake) {
+        return this.belirtmeHali(noun, fake);
+    },
+    yi: function (noun, fake) {
         return this.belirtmeHali(noun, fake);
     },
 
-    /**
-     * Dative case
-     *
-     * @param noun
-     * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @returns {string}
-     */
-    yonelmeHali: function(noun, fake) {
-        noun = noun.toString().trim();
-        fake = Turkce.isFake(fake);
-        var fake_;
+    yonelmeHali: function (noun, fake) {
+        var orgNoun = noun != null ? noun.toString().trim() : "";
+        noun = this.filterAndTrim(orgNoun);
+        var isFake = fake != null && fake !== false && fake !== "";
 
-        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
-            fake = noun;
-            noun = fake_;
+        if (!isFake) {
+            var fake_ = this.checkHasPronounce(noun);
+            if (fake_ != null) {
+                fake = orgNoun;
+                noun = fake_;
+                isFake = true;
+            }
         }
 
         //  Check the ending if it's a number
-        if(/\d$/.test(noun)) return this.processForNumber(this.yonelmeHali, noun);
+        if (/\d$/.test(noun))
+            return this.processForNumber(this.yonelmeHali.bind(this), orgNoun);
 
-        var last_letter      = noun.substr(-1, 1),
-            last_3_letter    = noun.substr(-3, 3),
-            nouns            = noun.split(' '),
-            noun_length      = nouns.length,
-            last_noun        = nouns[noun_length - 1],
-            last_noun_length = last_noun.length;
+        var lastLetter = this.substr(noun, 1);
+        var last3 = this.substr(noun, 3);
+        var nouns = noun.split(/\s+/).filter(Boolean);
+        var lastNoun = nouns.length > 0 ? nouns[nouns.length - 1] : "";
 
-        if(fake !== false) noun = fake;
+        if (isFake)
+            orgNoun = fake;
 
         var blending = "";
-        if((Turkce.vowel.test(last_letter) || (/[çÇ]/.test(last_3_letter) && Turkce.vowelE.test(last_letter))) && !/[ğçĞÇ]/.test(last_letter) && !/^çü|^ÇÜ|^ÇÖ|^çö/.test(last_3_letter)) blending = "y";
-        if((Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1))) blending = "n";
+        if (lastLetter.length > 0 && this.isVowel(lastLetter.charAt(0)))
+            blending = "y";
 
-        var vovels = last_3_letter.match(Turkce.vowelG),
-            suffix = "e";
+        if (this.isNounPhrase(nouns, lastNoun))
+            blending = "n";
 
-        if(vovels == null) return (noun + "'" + blending + suffix);
+        var suffix = "e";
+        if (!this.isThinException(lastNoun)) {
+            var lastVowel = this.getLastVowel(last3);
+            if (lastVowel != null) {
+                var v = toTurkishLowerCase(lastVowel);
+                if (v === "a" || v === "ı" || v === "o" || v === "u")
+                    suffix = "a";
+            }
+        }
 
-        if(/[ouaıOUAI]/.test(vovels[(vovels.length) - 1])) suffix = "a";
-
-        return (noun + "'" + blending + suffix);
-
+        return this.formatOutput(orgNoun, blending, suffix);
     },
-    dativeCase: function(noun, fake) {
+
+    dativeCase: function (noun, fake) {
+        return this.yonelmeHali(noun, fake);
+    },
+    ye: function (noun, fake) {
         return this.yonelmeHali(noun, fake);
     },
 
-    /**
-     * Locative case
-     *
-     * @param noun
-     * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @returns {string}
-     */
-    bulunmaHali: function(noun, fake) {
-        noun = noun.toString().trim();
-        fake = Turkce.isFake(fake);
-        var fake_;
+    bulunmaHali: function (noun, fake) {
+        var orgNoun = noun != null ? noun.toString().trim() : "";
+        noun = this.filterAndTrim(orgNoun);
+        var isFake = fake != null && fake !== false && fake !== "";
 
-        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
-            fake = noun;
-            noun = fake_;
+        if (!isFake) {
+            var fake_ = this.checkHasPronounce(noun);
+            if (fake_ != null) {
+                fake = orgNoun;
+                noun = fake_;
+                isFake = true;
+            }
         }
 
         //  Check the ending if it's a number
-        if(/\d$/.test(noun)) return this.processForNumber(this.bulunmaHali, noun);
+        if (/\d$/.test(noun))
+            return this.processForNumber(this.bulunmaHali.bind(this), orgNoun);
 
-        var last_letter      = noun.substr(-1, 1),
-            last_3_letter    = noun.substr(-3, 3),
-            last_2_letter    = noun.substr(-2, 2),
-            nouns            = noun.split(' '),
-            noun_length      = nouns.length,
-            last_noun        = nouns[noun_length - 1],
-            last_noun_length = last_noun.length;
+        var lastLetter = this.substr(noun, 1);
+        var last3 = this.substr(noun, 3);
+        var nouns = noun.split(/\s+/).filter(Boolean);
+        var lastNoun = nouns.length > 0 ? nouns[nouns.length - 1] : "";
 
-        if(fake !== false) noun = fake;
+        if (isFake)
+            orgNoun = fake;
 
         var blending = "";
-        if((Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1))) blending = "n";
+        if (this.isNounPhrase(nouns, lastNoun))
+            blending = "n";
 
-        var suffix  = "d",
-            suffix_ = "e";
-        if(/[pçktfşhPÇKTFŞH]/.test(last_2_letter)) suffix = "t";
-        if(/[ğĞ]/.test(last_letter)) suffix = "d";
-        if(/ş|s|ç/i.test(last_2_letter)) suffix = "t";
-        if(Turkce.vowel.test(last_letter)) suffix = "d";
-        if(/şk|ŞK/.test(last_3_letter)) suffix_ = "a";
+        var suffix = "d";
+        var suffix_ = "e";
 
-        var vovels = last_3_letter.match(Turkce.vowelG);
+        if (/[pçktfşhPÇKTFŞH]/.test(lastLetter))
+            suffix = "t";
+        if (/şk|ŞK/.test(last3))
+            suffix_ = "a";
 
-        if(vovels == null) return (noun + "'" + blending + suffix + suffix_);
+        if (!this.isThinException(lastNoun)) {
+            var lastVowel = this.getLastVowel(last3);
+            if (lastVowel != null) {
+                var v = toTurkishLowerCase(lastVowel);
+                if (v === "a" || v === "ı" || v === "o" || v === "u")
+                    suffix_ = "a";
+                else if (v === "e" || v === "i" || v === "ö" || v === "ü")
+                    suffix_ = "e";
+            }
+        }
 
-        if(/[ouaıOUAI]/.test(vovels[(vovels.length) - 1])) suffix_ = "a";
-        if(/[öüeiÖÜEİ]/.test(vovels[(vovels.length) - 1])) suffix_ = "e";
-
-        return (noun + "'" + blending + suffix + suffix_);
+        return this.formatOutput(orgNoun, blending, suffix + suffix_);
     },
-    locativeCase: function(noun, fake) {
+
+    locativeCase: function (noun, fake) {
+        return this.bulunmaHali(noun, fake);
+    },
+    de: function (noun, fake) {
         return this.bulunmaHali(noun, fake);
     },
 
-    /**
-     * Ablative case
-     *
-     * @param noun
-     * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @returns {string}
-     */
-    ayrilmaHali: function(noun, fake) {
-        noun = noun.toString().trim();
-        fake = Turkce.isFake(fake);
-        var fake_;
+    ayrilmaHali: function (noun, fake) {
+        var orgNoun = noun != null ? noun.toString().trim() : "";
+        noun = this.filterAndTrim(orgNoun);
+        var isFake = fake != null && fake !== false && fake !== "";
 
-        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
-            fake = noun;
-            noun = fake_;
+        if (!isFake) {
+            var fake_ = this.checkHasPronounce(noun);
+            if (fake_ != null) {
+                fake = orgNoun;
+                noun = fake_;
+                isFake = true;
+            }
         }
 
         //  Check the ending if it's a number
-        if(/\d$/.test(noun)) return this.processForNumber(this.ayrilmaHali, noun);
+        if (/\d$/.test(noun))
+            return this.processForNumber(this.ayrilmaHali.bind(this), orgNoun);
 
-        var last_letter      = noun.substr(-1, 1),
-            last_3_letter    = noun.substr(-3, 3),
-            last_2_letter    = noun.substr(-2, 2),
-            nouns            = noun.split(' '),
-            noun_length      = nouns.length,
-            last_noun        = nouns[noun_length - 1],
-            last_noun_length = last_noun.length;
+        var lastLetter = this.substr(noun, 1);
+        var last3 = this.substr(noun, 3);
+        var nouns = noun.split(/\s+/).filter(Boolean);
+        var lastNoun = nouns.length > 0 ? nouns[nouns.length - 1] : "";
 
-        if(fake !== false) noun = fake;
+        if (isFake)
+            orgNoun = fake;
 
         var blending = "";
-        if((Turkce.nounPhraseEnds.test(last_noun) && last_noun_length > 6 || (Turkce.nounPhraseWords.indexOf(last_noun.toLowerCase()) != -1 && noun_length > 1))) blending = "n";
+        if (this.isNounPhrase(nouns, lastNoun))
+            blending = "n";
 
-        var suffix  = "d",
-            suffix_ = "e";
-        if(/[pçktfşhPÇKTFŞH]/.test(last_2_letter)) suffix = "t";
-        if(/[ğĞ]/.test(last_letter)) suffix = "d";
-        if(/ş|s|ç/i.test(last_2_letter)) suffix = "t";
-        if(Turkce.vowel.test(last_letter)) suffix = "d";
-        if(/şk|ŞK/.test(last_3_letter)) suffix_ = "a";
+        var suffix = "d";
+        var suffix_ = "e";
 
-        var vovels = last_3_letter.match(Turkce.vowelG);
+        if (/[pçktfşhPÇKTFŞH]/.test(lastLetter))
+            suffix = "t";
+        if (/şk|ŞK/.test(last3))
+            suffix_ = "a";
 
-        if(vovels == null) return (noun + "'" + blending + suffix + suffix_ + "n");
+        if (!this.isThinException(lastNoun)) {
+            var lastVowel = this.getLastVowel(last3);
+            if (lastVowel != null) {
+                var v = toTurkishLowerCase(lastVowel);
+                if (v === "a" || v === "ı" || v === "o" || v === "u")
+                    suffix_ = "a";
+                else if (v === "e" || v === "i" || v === "ö" || v === "ü")
+                    suffix_ = "e";
+            }
+        }
 
-        if(/[ouaıOUAI]/.test(vovels[(vovels.length) - 1])) suffix_ = "a";
-        if(/[öüeiÖÜEİ]/.test(vovels[(vovels.length) - 1])) suffix_ = "e";
-
-        return (noun + "'" + blending + suffix + suffix_ + "n");
+        return this.formatOutput(orgNoun, blending, suffix + suffix_ + "n");
     },
-    ablativeCase: function(noun, fake) {
+
+    ablativeCase: function (noun, fake) {
+        return this.ayrilmaHali(noun, fake);
+    },
+    den: function (noun, fake) {
         return this.ayrilmaHali(noun, fake);
     },
 
-    /**
-     * Genitive case
-     *
-     * @param noun
-     * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @returns {string}
-     */
-    sahiplikHali: function(noun, fake) {
-        noun = noun.toString().trim();
-        fake = Turkce.isFake(fake);
-        var fake_;
+    sahiplikHali: function (noun, fake) {
+        var orgNoun = noun != null ? noun.toString().trim() : "";
+        noun = this.filterAndTrim(orgNoun);
+        var isFake = fake != null && fake !== false && fake !== "";
 
-        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
-            fake = noun;
-            noun = fake_;
+        if (!isFake) {
+            var fake_ = this.checkHasPronounce(noun);
+            if (fake_ != null) {
+                fake = orgNoun;
+                noun = fake_;
+                isFake = true;
+            }
         }
 
         //  Check the ending if it's a number
-        if(/\d$/.test(noun)) return this.processForNumber(this.sahiplikHali, noun);
+        if (/\d$/.test(noun))
+            return this.processForNumber(this.sahiplikHali.bind(this), orgNoun);
 
-        var last_letter   = noun.substr(-1, 1),
-            last_3_letter = noun.substr(-3, 3);
+        var lastLetter = this.substr(noun, 1);
+        var last3 = this.substr(noun, 3);
+        var nouns = noun.split(/\s+/).filter(Boolean);
+        var lastNoun = nouns.length > 0 ? nouns[nouns.length - 1] : "";
 
-        if(fake !== false) noun = fake;
+        if (isFake)
+            orgNoun = fake;
 
         var blending = "";
-        if(Turkce.vowel.test(last_letter)) blending = "n";
+        if (lastLetter.length > 0 && this.isVowel(lastLetter.charAt(0)))
+            blending = "n";
 
-        var vovels = last_3_letter.match(Turkce.vowelG),
+        var suffix = "i";
+        if (this.isThinException(lastNoun)) {
             suffix = "i";
+        } else {
+            var lastVowel = this.getLastVowel(last3);
+            if (lastVowel != null) {
+                var v = toTurkishLowerCase(lastVowel);
+                if (v === "ö" || v === "ü")
+                    suffix = "ü";
+                else if (v === "a" || v === "ı")
+                    suffix = "ı";
+                else if (v === "o" || v === "u")
+                    suffix = "u";
+            }
+        }
 
-        if(vovels == null) return (noun + "'" + blending + suffix + "n");
-
-        if(/[öüÖÜ]/.test(vovels[(vovels.length) - 1])) suffix = "ü";
-        if(/[aıAI]/.test(vovels[(vovels.length) - 1])) suffix = "ı";
-        if(/[ouOU]/.test(vovels[(vovels.length) - 1])) suffix = "u";
-
-        return (noun + "'" + blending + suffix + "n");
+        return this.formatOutput(orgNoun, blending, suffix + "n");
     },
-    genitiveCase: function(noun, fake) {
+
+    genitiveCase: function (noun, fake) {
+        return this.sahiplikHali(noun, fake);
+    },
+    nin: function (noun, fake) {
         return this.sahiplikHali(noun, fake);
     },
 
+    vasitaHali: function (noun, fake) {
+        var orgNoun = noun != null ? noun.toString().trim() : "";
+        noun = this.filterAndTrim(orgNoun);
+        var isFake = fake != null && fake !== false && fake !== "";
 
-    /**
-     * Comitative case
-     *
-     * @param noun
-     * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @returns {string}
-     */
-    vasitaHali: function(noun, fake) {
-        noun = noun.toString().trim();
-        fake = Turkce.isFake(fake);
-        var fake_;
-
-        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
-            fake = noun;
-            noun = fake_;
+        if (!isFake) {
+            var fake_ = this.checkHasPronounce(noun);
+            if (fake_ != null) {
+                fake = orgNoun;
+                noun = fake_;
+                isFake = true;
+            }
         }
 
         //  Check the ending if it's a number
-        if(/\d$/.test(noun)) return this.processForNumber(this.vasitaHali, noun);
+        if (/\d$/.test(noun))
+            return this.processForNumber(this.vasitaHali.bind(this), orgNoun);
 
-        var last_letter   = noun.substr(-1, 1),
-            last_3_letter = noun.substr(-3, 3);
+        var lastLetter = this.substr(noun, 1);
+        var last3 = this.substr(noun, 3);
+        var nouns = noun.split(/\s+/).filter(Boolean);
+        var lastNoun = nouns.length > 0 ? nouns[nouns.length - 1] : "";
 
-        if(fake !== false) noun = fake;
+        if (isFake)
+            orgNoun = fake;
 
         var blending = "";
-        if(Turkce.vowel.test(last_letter)) blending = "y";
+        if (lastLetter.length > 0 && this.isVowel(lastLetter.charAt(0)))
+            blending = "y";
 
-        var vovels = last_3_letter.match(Turkce.vowelG),
-            suffix = "e";
+        var suffix = "e";
+        if (!this.isThinException(lastNoun)) {
+            var lastVowel = this.getLastVowel(last3);
+            if (lastVowel != null) {
+                var v = toTurkishLowerCase(lastVowel);
+                if (v === "a" || v === "ı" || v === "o" || v === "u")
+                    suffix = "a";
+            }
+        }
 
-        if(vovels == null) return (noun + "'" + blending + "l" + suffix);
-
-        if(/[ouaıOUAI]/.test(vovels[(vovels.length) - 1])) suffix = "a";
-
-        return (noun + "'" + blending + "l" + suffix);
+        return this.formatOutput(orgNoun, blending, "l" + suffix);
     },
-    comitativeCase: function(noun, fake) {
+
+    comitativeCase: function (noun, fake) {
+        return this.vasitaHali(noun, fake);
+    },
+    ile: function (noun, fake) {
         return this.vasitaHali(noun, fake);
     },
 
-    /**
-     * Conjunction  (I'm not sure if this is the correct meaning of this)
-     *
-     * @param noun
-     * @param fake (integer/string if it's a fake noun): this is for pronounce usage
-     *
-     * @returns {string}
-     */
-    dahiBaglac: function(noun, fake) {
-        noun = noun.toString().trim();
-        fake = Turkce.isFake(fake);
-        var fake_;
+    dahiBaglac: function (noun, fake) {
+        var orgNoun = noun != null ? noun.toString().trim() : "";
+        noun = this.filterAndTrim(orgNoun);
+        var isFake = fake != null && fake !== false && fake !== "";
 
-        if(!fake && (fake_ = Turkce.checkHasPronounce(noun))) {
-            fake = noun;
-            noun = fake_;
+        if (!isFake) {
+            var fake_ = this.checkHasPronounce(noun);
+            if (fake_ != null) {
+                fake = orgNoun;
+                noun = fake_;
+                isFake = true;
+            }
         }
 
         //  Check the ending if it's a number
-        if(/\d$/.test(noun)) return this.processForNumber(this.dahiBaglac, noun);
+        if (/\d$/.test(noun))
+            return this.processForNumber(this.dahiBaglac.bind(this), orgNoun);
 
-        var last_3_letter = noun.substr(-3, 3);
+        var last3 = this.substr(noun, 3);
+        var nouns = noun.split(/\s+/).filter(Boolean);
+        var lastNoun = nouns.length > 0 ? nouns[nouns.length - 1] : "";
 
-        if(fake !== false) noun = fake;
+        if (isFake)
+            orgNoun = fake;
 
-        var blending = "d",
-            vovels   = last_3_letter.match(Turkce.vowelG),
-            suffix   = "e";
+        var blending = "d";
+        var suffix = "e";
 
-        if(vovels == null) return (noun + " " + blending + suffix);
+        if (!this.isThinException(lastNoun)) {
+            var lastVowel = this.getLastVowel(last3);
+            if (lastVowel != null) {
+                var v = toTurkishLowerCase(lastVowel);
+                if (v === "a" || v === "ı" || v === "o" || v === "u")
+                    suffix = "a";
+            }
+        }
 
-        if(/[ouaıOUAI]/.test(vovels[(vovels.length) - 1])) suffix = "a";
-
-        return (noun + " " + blending + suffix);
+        return orgNoun + " " + blending + suffix;
     },
-    conjunction: function(noun, fake) {
+
+    conjunction: function (noun, fake) {
+        return this.dahiBaglac(noun, fake);
+    },
+    dahi: function (noun, fake) {
         return this.dahiBaglac(noun, fake);
     },
 
-    /**
-     * Ordinal Number
-     *
-     * @param number
-     * @param integer (if it's a integer, use "'", otherwise don't.)
-     *
-     * !Warning: Don't give integer when you directly call this method, because it'll override the number with your integer.
-     *           This is mostly for internal use (see processForNumber())
-     *
-     * @returns {string}
-     */
-    siraSayi: function(number, integer) {
-        number  = number.toString().trim();
-        integer = Turkce.isFake(integer);
+    siraSayi: function (number, integer) {
+        number = number != null ? number.toString().trim() : "";
+        var isFake = integer != null && integer !== false && integer !== "";
 
         //  Check the ending if it's a number
-        if(/\d$/.test(number)) return this.processForNumber(this.siraSayi, number);
+        if (/\d$/.test(number))
+            return this.processForNumber(this.siraSayi.bind(this), number);
 
-        var last_letter   = number.substr(-1, 1);
-        var last_3_letter = number.substr(-3, 3);
+        var lastLetter = this.substr(number, 1);
+        var last3 = this.substr(number, 3);
 
         //  Check if the ending with "ört", if so make it "örd" (only for "dört")
-        if(last_3_letter.toLowerCase() == "ört") number = number.substr(0, number.length - 1) + (last_letter == "t" ? "d" : "D");
+        if (toTurkishLowerCase(last3) === "ört")
+            number = number.substring(0, number.length - 1) + (lastLetter === "t" ? "d" : "D");
 
-        if(integer !== false) number = integer;
+        if (isFake)
+            number = integer;
 
-        var blending = "i",
-            vovels   = last_3_letter.match(Turkce.vowelG),
-            suffix   = "i";
+        var lastVowel = this.getLastVowel(last3);
+        var suffix = "i";
 
-        if(vovels == null) return (number + (integer ? "'" : "") + blending + "nc" + suffix);
+        if (lastVowel != null) {
+            var v = toTurkishLowerCase(lastVowel);
+            if (v === "ö" || v === "ü")
+                suffix = "ü";
+            else if (v === "a" || v === "ı")
+                suffix = "ı";
+            else if (v === "o" || v === "u")
+                suffix = "u";
+        }
 
-        if(/[öüÖÜ]/.test(vovels[(vovels.length) - 1])) suffix = "ü";
-        if(/[aıAI]/.test(vovels[(vovels.length) - 1])) suffix = "ı";
-        if(/[ouOU]/.test(vovels[(vovels.length) - 1])) suffix = "u";
-
-        if(!Turkce.vowel.test(last_letter)) blending = suffix; else blending = "";
-
-        return (number + (integer ? "'" : "") + blending + "nc" + suffix);
+        var blending = (lastLetter.length > 0 && !this.isVowel(lastLetter.charAt(0))) ? suffix : "";
+        return number + (isFake ? "'" : "") + blending + "nc" + suffix;
     },
-    ordinalNumber: function(number, integer) {
-        return this.siraSayi(number);
+
+    ordinalNumber: function (number, integer) {
+        return this.siraSayi(number, integer);
+    },
+    nci: function (number, integer) {
+        return this.siraSayi(number, integer);
     },
 
-    /**
-     * Distributive
-     *
-     * @param number
-     * @param integer (if it's a integer, use "'", otherwise don't.)
-     *
-     * !Warning: Don't give integer when you directly call this method, because it'll override the number with your integer.
-     *           This is mostly for internal use (see processForNumber())
-     *
-     * @returns {string}
-     */
-    ulestirme: function(number, integer) {
-        number  = number.toString().trim();
-        integer = Turkce.isFake(integer);
+    ulestirme: function (number, integer) {
+        number = number != null ? number.toString().trim() : "";
+        var isFake = integer != null && integer !== false && integer !== "";
 
         //  Check the ending if it's a number
-        if(/\d$/.test(number)) return this.processForNumber(this.ulestirme, number);
+        if (/\d$/.test(number))
+            return this.processForNumber(this.ulestirme.bind(this), number);
 
-        var last_letter   = number.substr(-1, 1);
-        var last_3_letter = number.substr(-3, 3);
+        var lastLetter = this.substr(number, 1);
+        var last3 = this.substr(number, 3);
 
         //  Check if the ending with "ört", if so make it "örd" (only for "dört")
-        if(last_3_letter.toLowerCase() == "ört") number = number.substr(0, number.length - 1) + (last_letter == "t" ? "d" : "D");
+        if (toTurkishLowerCase(last3) === "ört")
+            number = number.substring(0, number.length - 1) + (lastLetter === "t" ? "d" : "D");
 
-        if(integer !== false) number = integer;
+        if (isFake)
+            number = integer;
 
-        var blending = "",
-            vovels   = last_3_letter.match(Turkce.vowelG),
-            suffix   = "e";
+        var blending = "";
+        var lastVowel = this.getLastVowel(last3);
+        var suffix = "e";
 
-        if(vovels == null) return (number + (integer ? "'" : "") + blending + suffix + "r");
+        if (lastVowel != null) {
+            var v = toTurkishLowerCase(lastVowel);
+            if (v === "a" || v === "ı" || v === "o" || v === "u")
+                suffix = "a";
+        }
 
-        if(/[ouaıOUAI]/.test(vovels[(vovels.length) - 1])) suffix = "a";
+        if (lastLetter.length > 0 && this.isVowel(lastLetter.charAt(0)))
+            blending = "ş";
 
-        if(Turkce.vowel.test(last_letter)) blending = "ş";
-
-        return (number + (integer ? "'" : "") + blending + suffix + "r");
+        return number + (isFake ? "'" : "") + blending + suffix + "r";
     },
-    distributive: function(number, integer) {
-        return this.ulestirme(number);
+
+    distributive: function (number, integer) {
+        return this.ulestirme(number, integer);
+    },
+    er: function (number, integer) {
+        return this.ulestirme(number, integer);
     },
 
-    /**
-     * This is for the numbers. It returns callback function with given number's pronounce
-     *
-     * @param callback
-     * @param noun
-     * @returns {string}
-     */
-    processForNumber: function(callback, noun) {
-        if(typeof callback == "undefined") callback = this.belirtmeHali;
+    processForNumber: function (callback, noun) {
+        if (typeof callback === "undefined")
+            callback = this.belirtmeHali.bind(this);
 
-        var last_number = noun.split('/\D/');
-        last_number     = last_number[last_number.length - 1];
+        var filteredNoun = this.filterAndTrim(noun);
+        var lastNumberArray = filteredNoun.split(/\D+/).filter(Boolean);
+        var lastNumber = "";
 
-        if(last_number == 0) {
+        for (var i = lastNumberArray.length - 1; i >= 0; i--) {
+            if (lastNumberArray[i] !== "") {
+                lastNumber = lastNumberArray[i];
+                break;
+            }
+        }
+
+        if (lastNumber === "0") {
             // it is directly zero
             return callback("fır", noun);
         }
 
         //  We don't need a full word, last 3 letters'd be enough
-        var endings      = {
-            '1': 'bir',
-            '2': 'iki',
-            '3': 'üç',
-            '4': 'ört',
-            '5': 'beş',
-            '6': 'ltı',
-            '7': 'edi',
-            '8': 'kiz',
-            '9': 'kuz',
-            '10': 'on',
-            '20': 'rmi',
-            '30': 'tuz',
-            '40': 'ırk',
-            '50': 'lli',
-            '60': 'mış',
-            '70': 'miş',
-            '80': 'sen',
-            '90': 'san'
+        var endings = {
+            "1": "bir",
+            "2": "iki",
+            "3": "üç",
+            "4": "ört",
+            "5": "beş",
+            "6": "ltı",
+            "7": "edi",
+            "8": "kiz",
+            "9": "kuz",
+            "10": "on",
+            "20": "rmi",
+            "30": "tuz",
+            "40": "ırk",
+            "50": "lli",
+            "60": "mış",
+            "70": "miş",
+            "80": "sen",
+            "90": "san"
         };
+
         //  last number's length
-        var digit_length = last_number.length;
+        var digitLength = lastNumber.length;
 
         //  Check last number
-        var last_1_letter = noun.substr(-1, 1),
-            last_1_number = last_1_letter.split('/^\D/');
-        last_1_number     = last_1_number[last_1_number.length - 1];
-        if(last_1_number != "0") return callback(endings[last_1_number], noun);
+        var last1 = this.substr(lastNumber, 1);
+        if (last1 !== "0" && endings.hasOwnProperty(last1))
+            return callback(endings[last1], noun);
 
         //  Check last two numbers
-        var last_2_letter = noun.substr(-2, 2),
-            last_2_number = last_2_letter.split('/^\D/');
-        last_2_number     = last_2_number[last_2_number.length - 1];
-        if(last_2_number != "00") return callback(endings[last_2_number], noun);
+        var last2 = this.substr(lastNumber, 2);
+        if (last2 !== "00" && endings.hasOwnProperty(last2))
+            return callback(endings[last2], noun);
 
         //  Check last three numbers
-        var last_3_letter = noun.substr(-3, 3),
-            last_3_number = last_3_letter.split('/^\D/');
-        last_3_number     = last_3_number[last_3_number.length - 1];
-        if(last_3_number != "000") return callback("yüz", noun);
+        var last3 = this.substr(lastNumber, 3);
+        if (last3 !== "000")
+            return callback("yüz", noun);
 
         //  Check last four numbers
-        var last_4_letter = noun.substr(-4, 4),
-            last_4_number = last_4_letter.split('/^\D/');
-        last_4_number     = last_4_number[last_4_number.length - 1];
-        if(last_4_number != "0000" || digit_length < 7) return callback("bin", noun);
+        var last4 = this.substr(lastNumber, 4);
+        if (last4 !== "0000" || digitLength < 7)
+            return callback("bin", noun);
 
         //  Check for the rest
-        if(digit_length >= 7) {
-            // if this is 8, 11, 14, etc.
-            if((digit_length + 1) % 3 == 0) {
-                if(digit_length % 2 == 0) {
-                    return callback("yon", noun);
-                } else {
-                    return callback("yar", noun);
-                }
-            } else if(digit_length % 3 == 0 || (digit_length + 2) % 3 == 0) {
-                if(digit_length % 2 == 0) {
-                    return callback("yar", noun);
-                } else {
-                    return callback("yon", noun);
-                }
-            }
-        }
+        // if this is 8, 11, 14, etc.
+        if ((digitLength + 1) % 3 === 0)
+            return callback(digitLength % 2 === 0 ? "yon" : "yar", noun);
 
-        return callback(noun);
+        if (digitLength % 3 === 0 || (digitLength + 2) % 3 === 0)
+            return callback(digitLength % 2 === 0 ? "yar" : "yon", noun);
+
+        return callback(noun, "");
     }
 };
+
+if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
+    module.exports = Turkce;
+}
